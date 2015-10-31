@@ -2,7 +2,7 @@ class MainController < ApplicationController
   
   
   def hello
-    demo_hash = {"name" =>"아메리카노", "count" => "1", "price" => "1500",  "options_list" => "Size:Regular_0/Large_300/Jumbo_500" }
+    demo_hash = [{"name" =>"아메리카노", "count" => "1", "price" => "1500", "type" =>0, "hot_cold"=>0,  "options_list" => "Size:Regular_0/Large_300/Jumbo_500" },{"name" =>"그린티라뗴", "count" => "1", "price" => "1500","hot_cold"=>1, "type"=>1,  "options_list" => "Size:Regular_0/Large_300/Jumbo_500" }]
     render json: demo_hash
   
   end
@@ -34,7 +34,7 @@ class MainController < ApplicationController
   
   def cafelist #카페 선택 화면
     
-    #카페 DB 필요함
+    #카페 DB 필요함 
     #이름, 위치, 사진
 
   end
