@@ -1,3 +1,35 @@
 // Place all the styles related to the main controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+.menuitem{  //메뉴 박스 하나 전체
+ 
+ border-top:solid 1px;
+ vertical-align:center;
+}
+
+//------------------------------메뉴 박스 안----------------------------
+.menuinfo{ //기본적으로 보이는 메뉴의 정보
+  // border:solid 1px;
+  text-align:center;
+  margin:10px;
+}
+  .menutitle_kr{
+    font-size:1.5em;
+    display:block;
+  }
+  .menutitle_eng{
+    font-size:1em;
+    display:block;
+  }
+  .menuprice{
+    font-size:1em;
+    display:block;
+  }
+.menuaddorder{  //터치시 나타나는 주문메뉴
+  height:15vh;
+  border:solid 1px;
+  display:none;
+}
+

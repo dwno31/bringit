@@ -1,0 +1,22 @@
+<% @menulist.each do|menu| %>
+<div class=menuitem>
+  <div class=menuinfo>
+    <div class=menuinfo_text>  
+      <div class=menutitle_kr>
+        <span><%= menu.menu_title%></span>
+      </div>
+      <div class=menuprice>
+        <span><%= menu.menu_price%>원</span>
+      </div>
+    </div>
+  </div>
+  <div class=menuaddorder>
+    <div class=order_quantity>
+    </div>
+    <div class=order_size>
+    </div>
+    <div class=order_addshot>
+    </div>
+  </div>
+</div>
+<% end %>

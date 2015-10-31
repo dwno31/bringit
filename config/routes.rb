@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   get 'main/index'
-
+  get 'main/cafeinfo'
+  get 'main/hello'
+  get ':controller(/:action)'
+  post ':controller(/:action)'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
