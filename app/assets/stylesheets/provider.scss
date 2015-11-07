@@ -1,18 +1,97 @@
 // Place all the styles related to the provider controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+//-------------네비게이션바
 .top_nav{
  margin:0;
  padding:0;
  height:56px;
  text-align:center;
  background-color:rgb(240, 196, 25);
- vertical-align:middle;
+ 
 }
 
 .top_nav span{
  color:white;
- padding:auto;
+ font-size:2em;
+ font-weight:900;
+}
+
+
+//-------화면 기본
+
+.slide_whole{
+ background-color:rgb(224,224,224);
+ height:100%;
+}
+
+.order_receipt{
+ background-color:white;
+ border-radius:3px;
+ box-shadow: 5px 5px 5px #888888;
+ margin:2%;
+ height:18%;  
+ width:29%;
+ float:left;
+}
+
+.order_number{
+ text-align:center;
  font-size:2em;
  font-weight:800;
+ border-bottom:1px solid rgb(224,224,224); 
+}
+
+.order_info{
+ margin:4px 2px 2px 4px;
+ font-size:1em;
+}
+
+.order_info p{
+ margin-top:10px;
+ margin-bottom:10px;
+}
+
+.order_info span{
+ font-size:1.5em;
+ font-weight:800;
+}
+
+.slide_footer{
+ position:absolute;
+ right:0;
+ left:0;
+ bottom:0;
+ background:rgb(240,196,25);
+ height:10%;
+ text-align:center;
+ vertical-align:center;
+}
+
+.order_button{
+ border-radius:15px;
+ font-size:1.5em;
+ font-weight:800;
+ box-shadow:none !important;
+ text-shadow:none !important;
+
+border:none !important;
+
+box-shadow:none !important;
+}
+
+.footer_divider{
+ display:inline-block;
+ width:49.5%;
+ padding-top:5px;
+}
+
+//--------액션관련
+
+
+
+.order_active{
+ background-color:rgb(240, 196, 25);
+ 
 }

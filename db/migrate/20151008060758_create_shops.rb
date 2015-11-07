@@ -5,5 +5,7 @@ class CreateShops < ActiveRecord::Migration
         t.string :shop_name
         
     end
+    
+    
   end
 end

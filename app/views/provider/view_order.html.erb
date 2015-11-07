@@ -1,16 +1,202 @@
+<script type="text/javascript" src="http://bringit.kr:9292/faye/client.js"></script>
 <script>
+
+var client = new Faye.Client('http://bringit.kr:9292/faye');
+
+function bring_timer(name){
+      
+      //매 1초마다 브링타이머 실행해서 타이머가 흐르게한다
+      setTimeout('bring_timer("'+name+'");','1000');
+      
+      var left_times = [];
+      left_times = document.getElementsByName(name);  
+      
+      //모든 타이머 적용에 대한 반복문
+      for(i=0;i<left_times.length;i++){
+        left_time = left_times[i].innerHTML.split(":");
+        left_minute = Number(left_time[0]);
+        left_second = Number(left_time[1]);
+        //둘다 00일시 그대로 고정, 아니면 타이머가 흐르게함
+        if((left_second+left_minute)===0){
+        }
+        else{
+          if(left_second === 0){
+            left_second = 59;
+            left_minute--;
+          }
+          else{
+            left_second--;
+          };
+        };
+        
+        // 1분일때, 30초일때, 10초 미만일 때 Beep 를 울린다
+        if (left_minute ===1){
+          if (left_second ===0){
+          window.navigator.vibrate(200);  
+          }
+        }  
+        else if(left_minute===0){
+          if(left_second===30){
+          window.navigator.vibrate(400);  
+          }
+          else if(left_second<10){
+          window.navigator.vibrate(400);
+          };
+        };
+
+        // 숫자가 한자리수일때, 앞에 0을 붙인다
+        if (left_minute < 10){
+         left_minute = '0'+left_minute 
+        };
+        if (left_second < 10){
+         left_second = '0'+left_second 
+        };
+        
+        // 1초 흐른 결과를 다시 해당 타이머에 반영한다
+        document.getElementsByName(name)[i].innerHTML = left_minute +':'+left_second;
+        
+      };
+       
+       
+      
+      return true;
+}
+
 $(document).ready(function() {
+    bring_timer('time_after');
     $('#fullpage').fullpage({
         controlArrows: false
       
       });
 });
+
+function select_order(order_id){
+    $(order_id).toggleClass("order_active");
+    window.navigator.vibrate(100);
+  };
+
+
+function order_intoline(){
+  //해당라인으로 들어가는걸 모아
+  var intoline_list = [];
+  $("#order_beforeline>.order_receipt.order_active").each( function(i,e) {
+    intoline_list.push($(e).attr('id'));
+  });
+  $.ajax({
+    url:"http://bringit-production-dwno31.c9.io/provider/inline_list",
+    method: "POST",
+    data: {intoline_list :intoline_list},
+    success:function(){
+              $("#order_beforeline>.order_receipt.order_active").appendTo("#order_afterline").toggleClass("order_active");
+              window.navigator.vibrate(100);
+              },
+  });
+  
+  //옮긴다
+  
+};
+
+function order_complete(){
+  // 완료한 order의 list를 서버로 push
+  
+  // push 할 list를 active된 order_receipt에서 받아옴
+  var complete_list = [];
+  $("#order_afterline>.order_receipt.order_active").each( function(i,e) {
+    complete_list.push($(e).attr('id'));
+  });
+  
+  $.ajax({
+    url:"http://bringit-production-dwno31.c9.io/provider/complete_list",
+    method: "POST",
+    data: {complete_list :complete_list},
+    success:$("#order_afterline>.order_receipt.order_active").remove(),
+    
+  });
+};
+
+
 </script>
 <%= render partial: "provider_top" %>
 <div id="fullpage">
     <div class="section">
-      <div class="slide">hello1</div>
-      <div class="slide">hello2</div>      
+      <div class="slide">
+        <div class="slide_whole" id="order_beforeline">
+        
+          <div onclick="select_order('#order_b1')" id=order_b1 class="order_receipt">
+            <div class="order_number">
+              <span>B1</span>
+            </div>
+            <div class="order_info">
+              <span>아이스 카페라떼</span>
+              <p>
+              [size]<strong>TALL</strong><br>
+              [옵션]<strong>두유</strong><br>
+              </p>
+              브링시간  <span name=time_after>03:12</span>후
+            </div>
+          </div>
+          
+          <div onclick="select_order('#order_b2')" id=order_b2 class="order_receipt">
+            <div class="order_number">
+              <span>B1</span>
+            </div>
+            <div class="order_info">
+              <span>아이스 카페라떼</span>
+              <p>
+              [size]<strong>TALL</strong><br>
+              [옵션]<strong>두유</strong><br>
+              </p>
+              브링시간  <span name=time_after>05:32</span>후
+            </div>  
+          </div>
+        
+        <div class=slide_footer>
+          <div class=footer_divider>
+            <button onclick=order_intoline() class=order_button>제작탭으로</button>
+          </div>
+          <div class=footer_divider>
+            <button onclick=order_complete() class=order_button>알람보내기</button>
+          </div>
+          
+        </div>  
+      
+        
+          
+      </div>
+      
+      
+    </div>
+      
+    <div class="slide">
+      <div class="slide_whole" id="order_afterline">
+      
+      </div>
     </div>
     
+    
+  </div>
 </div>
+
+<script>
+
+function second_to_minute(second){
+  var total_second = Math.floor(second);
+  var left_minute = Math.floor(second/60);
+  var left_second = total_second - left_minute*60
+  var left_time = left_minute+":"+left_second
+  
+  return left_time
+};
+
+var subscription = client.subscribe('/foo', function(message) {
+  // handle message
+  console.log(message);
+  var pick_left = second_to_minute(message.pickup_time);
+  $("#order_beforeline").append("<div onclick=\"select_order('#order_"+message.order_number+"')\" id=order_"+message.order_number+" class=\"order_receipt\"><div class=\"order_number\"><span>B1</span> </div><div class=\"order_info\"><span>"+message.menu+"</span><p>[size]<strong>"+message.size+"</strong><br>[옵션]<strong>"+message.option+"</strong><br></p>브링시간  <span name=time_after>"+pick_left+"</span>후</div></div> ");
+  
+});
+
+
+
+  
+</script>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151008061735) do
+ActiveRecord::Schema.define(version: 20151105061047) do
 
   create_table "customers", force: :cascade do |t|
     t.string   "customer_simid", limit: 255
@@ -21,23 +21,31 @@ ActiveRecord::Schema.define(version: 20151008061735) do
   end
 
   create_table "menus", force: :cascade do |t|
-    t.integer  "menu_price", limit: 4
-    t.integer  "shop_id",    limit: 4
-    t.string   "menu_title", limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.integer "menu_price",  limit: 4
+    t.integer "shop_id",     limit: 4
+    t.string  "menu_title",  limit: 255
+    t.integer "hot_cold",    limit: 4
+    t.string  "menu_option", limit: 255
+    t.integer "caffeine",    limit: 4
+    t.float   "menu_order",  limit: 24
   end
 
   create_table "orders", force: :cascade do |t|
-    t.integer  "customer_id", limit: 4
-    t.integer  "menu_id",     limit: 4
-    t.integer  "shop_id",     limit: 4
+    t.integer  "customer_id",  limit: 4
+    t.integer  "menu_id",      limit: 4
+    t.integer  "shop_id",      limit: 4
     t.datetime "order_time"
+    t.string   "order_option", limit: 255
+    t.boolean  "check_active"
+    t.string   "daily_number", limit: 255
+    t.integer  "order_count",  limit: 4
   end
 
   create_table "shops", force: :cascade do |t|
     t.string "shop_location", limit: 255
     t.string "shop_name",     limit: 255
+    t.string "cafe_img",      limit: 255
+    t.string "cafe_phone",    limit: 255
   end
 
 end
