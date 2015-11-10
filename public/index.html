@@ -60,7 +60,7 @@
                         <a class="page-scroll" href="#summary"><font color="black">한줄요약</font></a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#contact"><font color="black">연락처</font></a>
+                        <a class="page-scroll" href="#contact"><font color="black">제휴문의</font></a>
                     </li>
                 </ul>
             </div>
@@ -82,26 +82,39 @@
             </div>
         </div>
     </header>
-
-    <section  id="about">
+<section  id="about">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 text-center">
-                    <img src="img/let_me_drink.png" style="width:100%;"/>
+                    <img src="img/let_me_drink.png" style="width:90%;"/>
                     <br>
+            <div class="row">
+            <div style="margin-top:70px">
+                   <strong> <h4>모닝커피를 마시고 싶어하는 고객의 목소리를 들어주세요!</h4></strong>
+            </div>
+            </div>
                     <hr class="light">
                     <div class="row">
                         <div class="col-md-10 col-md-offset-1">
                             <img src="img/story1.png" style="width: 100%;" />
                         </div>
                         <div class="col-md-10 col-md-offset-1">
-                            <img src="img/dont.png" style="width: 100%;" />
+                            <img src="img/dont.png" style="width: 80%;" />
+                        <div style="margin-top:70px">
+                            <img src="img/story2.png" style="width: 100%;" />
+                        </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-10 col-md-offset-1">
-                            <img src="img/story2.png" style="width: 100%;" />
-                        </div>
+                    <div class="col-lg-8 col-lg-offset-2 text-center">
+                        <img src="img/promise.png" style="width :100%;">
+                    </div>
+                    </div>
+                <div class="row">
+                    <div class="text-center">
+                    <div style="">
+                        <br><p><h3>브링잇의 3STEP과 함께라면 </h3></p>
+                        <p><h3>고객에게 모닝커피와 함께하는 아침을 약속드릴 수 있습니다!</h3></p>
                     </div>
                     </div>
                 </div>
@@ -109,13 +122,9 @@
         </div>
     </section>
     
-     <section  id="about">
+     <section  id="about" style="padding-top:0;">
         <div class="container">
             <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 text-center">
-                    <img src="img/promise.png" style="width :70%;">
-                    <br>
-                </div>
                     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
                         <!-- Indicators -->
                         <ol class="carousel-indicators">
@@ -162,12 +171,7 @@
                         <span class="sr-only">Next</span>
                         </a>
                     </div>
-
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 text-center">
-                    <br><h3>BRING IT이 약속을 지켜드리겠습니다!</h3>
                 </div>
-            </div>
             
         </div>
     </section>
@@ -217,18 +221,19 @@
                         <h2 class="section-heading">가맹신청</h2>
                         <hr class="primary">
                     </div>
-                    <div class="col-lg-4 col-lg-offset-2 text-center">
-                        <i class="fa fa-phone fa-4x"></i>
-                        <p>010-9596-7403</p>
-                    </div>
-                    <div class="col-lg-4 text-center">
+                    <div class="col-md-6 col-md-offset-3" align="center">
+
                         <i class="fa fa-envelope-o fa-4x"></i>
-                        <p><a href="mailto:your-email@your-domain.com">dwno31@bringit.kr</a></p>
+                        <p><a href="mailto:help@bringit.kr">help@bringit.kr</a></p>
+                        
+                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                          신청하기
+                        </button>
+
                     </div>
                 </div>
             </div>
         </section>
-    
 <footer style="
     padding-top: 20px;
     padding-bottom: 10px;
@@ -240,6 +245,55 @@
 			 <p style="color:#EAC046" align="center">©Copyright 2015 by TEAMPLANET. All Right Reserved.</p>
 		
 </footer>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">브링잇 제휴문의</h4>
+      </div>
+      <div class="modal-body">
+       
+       
+            <div class="form-group">
+                <input  class="form-control" id="companyName" type="text" name="company_name" placeholder="업체명">
+            </div>
+            <div class="form-group">
+                <input class="form-control" id="empName" type="text" name="emp_name" placeholder="담당자명" >
+            </div>
+            <div class="form-group">
+                <input class="form-control" id="tel" type="text" name="tel" placeholder="전화번호" >
+            </div>
+            <div class="form-group">
+                <input  class="form-control" id="email" type="text" name="email" placeholder="E-mail">
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" id="contents" name="contents" placeholder="내용" ></textarea>
+            </div>
+            <div>
+                <p>
+                    개인정보 수집/이용 동의<br>
+                    - 수집항목 : 이름, 이메일, 휴대전화번호<br>
+                    - 수집/이용목적 : 제휴 문의에 대한 처리와 결과 회신<br>
+                    - 보유/이용기간 : [전자상거래 등에서의 소비자보호에 관련 법률]에 의거하여 문의처리 후 3년간 보관 후 지체 없이 파기<br>
+                    - 동의거부권 및 불이익 : 고객님께서는 동의를 거부하실 권리가 있습니다. 단, 동의를 거부하시는 경우에는 제휴문의 서비스를 이용하실 수 없습니다.
+                </p>
+            </div>
+            <div class="agreement_cell">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" aria-label="...">개인정보 수집,이용에 동의합니다.
+                    </label>
+                </div>
+             </div>
+            <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+            <button type="submit" class="btn btn-primary" data-dismiss="modal" onclick="ajaxExample()">보내기</button>
+        
+    </div>
+  </div>
+</div>
+</div>
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
     <!-- Bootstrap Core JavaScript -->
@@ -247,5 +301,27 @@
 
 </body>
 
+<script>
+	function ajaxExample(){
+    // 사용자 ID를 갖고 온다.
+    var company = $("#company").val();
+    var name = $("#name").val();
+    var tel = $("#tel").val();
+    var email = $("#email").val();
+    var contents = $("#contents").val();
+    var allData = { "company": company, "name": name,"tel": tel,"email": email,"contents": contents }
+
+   $.ajax({
+   url: "http://bringit.kr/provider/new_inquire",
+   type: "POST",
+   data: allData,
+   dataType: "json",
+   success: function(data) {
+       alert('successfully');
+     }
+   });
+};
+
+</script>
 </html>
 
