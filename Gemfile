@@ -1,6 +1,10 @@
 source 'https://rubygems.org'
 
 
+gem 'spreadsheet'
+gem 'to_xls'
+gem 'devise'
+gem 'gcm'
 gem 'figaro'
 gem 'faye'
 gem 'thin'

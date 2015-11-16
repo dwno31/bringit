@@ -7,7 +7,7 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 
-Shop.create(shop_location:"신촌", cafe_img:"http://bringit-production-dwno31.c9.io/ngn_cafe.jpg", shop_name:"뉴기니 버드", cafe_phone:"010-9596-7403")
+Shop.create(shop_location:"신촌", cafe_img:"http://bringit-production-dwno31.c9.io/ngn_cafe.jpg", shop_name:"뉴기니 버드", cafe_phone:"010-9596-7403", shop_loginid: "test")
 
 Menu.create(menu_title: "아메리카노", menu_price: 2500, shop_id: 1, hot_cold: 0, caffeine: 0, menu_option: "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500")
 Menu.create(menu_title: "카페라떼", menu_price: 3100, shop_id: 1, hot_cold: 0, caffeine: 0, menu_option: "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500,우유:우유_0/저지방우유_0/두유_0")

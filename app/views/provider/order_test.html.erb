@@ -1,0 +1,21 @@
+<script>
+
+function test_push(){
+  
+  var test_input = $("#test").val()
+  $.ajax({
+    url: "http://bringit-production-dwno31.c9.io/main/order_success",
+    method: "POST",
+    data: JSON.parse(test_input),
+    success: function(){ $("#test").val("")}
+    
+    
+    
+  });
+  
+};
+
+
+</script>
+
+<input type=text id=test><input type=submit onclick=test_push()>

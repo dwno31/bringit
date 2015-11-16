@@ -1,0 +1,32 @@
+<script type="text/javscript" src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/vendors/jquery.slimscroll.min.js"></script>
+<script>
+
+$(document).ready(function() {
+    $('#fullpage').fullpage({
+        controlArrows: false,
+        normalScrollElements: '.slide_whole'
+      
+      });
+});
+
+</script>
+<%= render partial: "provider_top" %>
+<div id="fullpage">
+  <div class="section">
+    <div class="slide">
+      <div class="slide_whole" style="background:white;">
+        <div class=login_div>
+          <div class=login_logo></div>
+          <div class=login_input>
+              <form action=/provider/login_check method=post>
+              <input class=login_text type=text name=shopid placeholder="PHONE_NUMBER"><p></p>
+              <input class=login_text type=password name=shoppass placeholder="PASSWORD"><p></p>
+              <input class="login_text login_button" type=submit value=" 로그인 ">
+              </form>
+          </div>
+        </div>
+        <div class=slide_footer></div>
+      </div>
+    </div>
+  </div>
+</div

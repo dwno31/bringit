@@ -1,6 +1,9 @@
+
+<script src="/custom_bt/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="/custom_bt/css/bootstrap.min.css">
 <% @menulist.each do|menu| %>
 <div class=menuitem>
-  <div class=menuinfo>
+  <div class=menuinfo onclick="toggle_detail(<%=menu.id%>)" id=<%=menu.id%>menu>
     <div class=menuinfo_text>  
       <div class=menutitle_kr>
         <span><%= menu.menu_title%></span>
@@ -10,13 +13,174 @@
       </div>
     </div>
   </div>
-  <div class=menuaddorder>
-    <div class=order_quantity>
+  <div class=menuaddorder id=<%=menu.id%>detail>
+    <div class="menu_adjust adjust_quantity">
+      <div class="adjust_left">
+        <span>수량</span>
+      </div>
+      <div class=adjust_right>
+        <div onclick="order_quantity('m', <%=menu.id%>)" class=image_icon><img src=/img/minus.png/></div>
+        <div class=adjust_value><span id=<%=menu.id%>quantity>1</span></div>
+        <div onclick="order_quantity('p', <%=menu.id%>)" class=image_icon><img src=/img/plus.png/></div>
+      </div>
     </div>
-    <div class=order_size>
+    <div class="menu_adjust adjust_size">
+      <div class=adjust_left>
+        <span>사이즈</span>
+      </div>
+      <div class=adjust_right>
+        <div onclick="order_size('s', <%=menu.id%>)" class=image_icon><img class=left_arrow src=/img/left_arrow.jpg/></div>
+        <div class=adjust_value><span id=<%=menu.id%>size>Regular</span></div>
+        <div onclick="order_size('b', <%=menu.id%>)"class=image_icon><img class=right_arrow src=/img/right_arrow.jpg/></div>
+      </div>
     </div>
-    <div class=order_addshot>
+    <div class="menu_adjust adjust_shot ">
+      <div class=adjust_left>
+        <span>샷 추가</span>
+      </div>
+      <div class=adjust_right>
+        <div onclick="order_shot('minus', <%=menu.id%>)" class=image_icon><img class=left_arrow src=/img/left_arrow.jpg/></div>
+        <div class=adjust_value><span id=<%=menu.id%>shot>None</span></div>
+        <div onclick="order_shot('add', <%=menu.id%>)" class=image_icon><img class=right_arrow src=/img/right_arrow.jpg/></div>
+      </div>
+    </div>
+    <div onclick="modify_long(<%=menu.id%>)" data-toggle=modal class="menu_adjust">
+      <div class="adjust_left">
+        <span>추가사항</span>
+      </div>
+      <div class="adjust_right long_option" style="height:5vh; width:40%;border-bottom:solid 1px black;">
+        <input type=text class=long_option id=<%=menu.id%>long_option>
+      </div>
+    </div>
+    <div onclick="add_order(<%=menu.id%>)"class="menu_adjust add_order">
+      <span>담기</span>
     </div>
   </div>
 </div>
+</div>
 <% end %>
+<!--long_option modal-->
+<div class="modal fade" id="long_option_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <span id=menu_id_modal style="display:none;"></span>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">추가 주문사항</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <textarea style="width:100%;" id="message-text"></textarea>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-primary" onclick="save_long()">등록하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  function add_order(menu_id){
+    var menu_id = menu_id
+    var menu_quantity = $("#"+menu_id+"quantity").text();
+    var menu_size = $("#"+menu_id+"size").text();
+    var menu_shot = $("#"+menu_id+"shot").text();
+    var menu_long_option = $("#"+menu_id+"long_option").val();
+    var user_sim = "<%=@user_sim%>"
+    var send_menu = {'id': menu_id, 'count': menu_quantity, 'size': menu_size, 'shot': menu_shot, 'long_option': menu_long_option, 'user_sim': user_sim};
+    console.log(send_menu);
+    
+    $.ajax({
+      url:"http://bringit-production-dwno31.c9.io/main/add_order",
+      data: send_menu,
+      dataType: 'json',
+      method: "POST",
+      success: function(){ $("#"+menu_id+"detail").hide();}
+      
+    });
+  };
+  
+  function toggle_detail(menu_id){
+    var menu_id= menu_id;
+    
+    if($("#"+menu_id+"detail").css("display") == "none"){
+      $(".menuaddorder").hide();
+      $("#"+menu_id+"detail").show();
+      $('html, body').animate({
+        scrollTop: $("#"+menu_id+"menu").offset().top
+      }, 800);
+    } else {
+        $("#"+menu_id+"detail").hide();
+    };
+    
+  };
+
+  function order_quantity(cal, id){
+    quantity = $("#"+id+"quantity");
+    if(cal === "p"){
+      quantity.html(parseInt(quantity.html())+1);
+    }else if(parseInt(quantity.html())>1){
+      quantity.html(parseInt(quantity.html())-1); 
+      
+    };
+    
+  };
+  
+  function order_size(type, id){
+    menu_id = id;
+    var size_match = {'Regular':0, 'Large':1, 'Jumbo':2};
+    current_size = size_match[$("#"+menu_id+"size").html()];
+    console.log(current_size);
+    
+    if (type === "b"){
+      if (current_size<2){
+        current_size++;
+      };
+      
+    }else{
+      if (current_size>0){
+        current_size--;
+      };
+    };
+    $("#"+menu_id+"size").html(Object.keys(size_match)[current_size]);
+  };
+  
+  function order_shot(type, id){
+    menu_id = id;
+    var shot_match = {'None':0, '1샷 추가':1, '2샷 추가':2};
+    current_shot = shot_match[$("#"+menu_id+"shot").html()];
+    console.log(current_shot);
+    
+    if (type === "add"){
+      if (current_shot<2){
+        current_shot++;
+      };
+      
+    }else{
+      if (current_shot>0){
+        current_shot--;
+      };
+    };
+    $("#"+menu_id+"shot").html(Object.keys(shot_match)[current_shot]);
+    
+  }
+  
+  function modify_long(menu_id){
+    current_long = $("#"+menu_id+"long_option");
+    $("#message-text").val($("#"+menu_id+"long_option").val());
+    $("#menu_id_modal").html(menu_id);
+    $('#long_option_modal').modal('toggle');
+    
+  };
+  function save_long(){
+    menu_id = $("#menu_id_modal").html();
+    $("#"+menu_id+"long_option").val($("#message-text").val());
+    // document.getElementById(menu_id+"long_option").innerHTML = $("#message-text").val()
+    $("#long_option_modal").modal('toggle');
+    
+  };
+
+</script>

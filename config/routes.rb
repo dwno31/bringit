@@ -4,6 +4,9 @@ Rails.application.routes.draw do
   get 'main/hello'
   get ':controller(/:action)'
   post ':controller(/:action)'
+  root to: "provider#view_order"
+  
+  # get 'provider/login' => 'devise/sessions#new'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

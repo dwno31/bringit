@@ -1,7 +1,7 @@
 // Place all the styles related to the provider controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
-
+// {"order":"[{\"name\":\"아이스 카라멜마키아또\",\"count\":1,\"price\":4000,\"options_list\":\"샷  추가:1샷 추가,Size:Regular\",\"long_option\":\"\"},{\"name\":\"아이스 카라멜마키아또\",\"count\":1,\"price\":4000,\"options_list\":\"샷  추가:None,Size:Regular\",\"long_option\":\"\"}]", "order_number":"", "pickup_time":"2015.11.08 19:19", "payment_method":"kakaoPay", "has_pickedup":"false", "cafe":"뉴기니 버드", "user_sim":"8982300214008166717" }
 //-------------네비게이션바
 .top_nav{
  margin:0;
@@ -10,6 +10,13 @@
  text-align:center;
  background-color:rgb(240, 196, 25);
  
+}
+.fullpage-wrapper{
+ height:100%;
+}
+
+.section{
+ height:100vh!important;
 }
 
 .top_nav span{
@@ -24,6 +31,7 @@
 .slide_whole{
  background-color:rgb(224,224,224);
  height:100%;
+ display:flex;
 }
 
 .order_receipt{
@@ -46,14 +54,41 @@
 .order_info{
  margin:4px 2px 2px 4px;
  font-size:1em;
+ height:65%;
 }
 
 .order_info p{
- margin-top:10px;
- margin-bottom:10px;
+ margin:0;
 }
 
 .order_info span{
+ font-size:1.5em;
+ font-weight:800;
+}
+
+.infos{
+ float:left;
+ width:90%;
+ margin:none;
+ border-bottom:1px solid black;
+}
+.info_count{
+ font-size:1.5em;
+ font-weight:800;
+ vertical-align:middle;
+ text-align:center;
+ float:left;
+ width:9%;
+ height:2.5em;
+}
+.info_count span{
+ vertical-align:middle;
+}
+.info_footer{
+ text-align:center;
+ bottom:0;
+}
+.info_footer span{
  font-size:1.5em;
  font-weight:800;
 }
@@ -84,7 +119,7 @@ box-shadow:none !important;
 .footer_divider{
  display:inline-block;
  width:49.5%;
- padding-top:5px;
+ padding-top:15px;
 }
 
 //--------액션관련
@@ -94,4 +129,39 @@ box-shadow:none !important;
 .order_active{
  background-color:rgb(240, 196, 25);
  
+}
+
+//---로그인 관련
+
+.login_div{
+ margin-top:5%;
+ width:100%;
+ height:70%;
+}
+.login_logo{
+ height:50%;
+ width:100%;
+ background-image:url('/img/logo.png');
+ background-repeat:no-repeat;
+ background-position:center;
+ background-size:contain;
+}
+.login_input{
+ height:50%;
+ background:white;
+ width:100%;
+ vertical-align:center;
+ text-align:center;
+ 
+}
+.login_text{
+ border-radius:5px;
+ font-size:2em;
+}
+.login_button{
+ background:rgb(240,196,25);
+ color:white;
+ font-weight:800;
+ border:none;
+ box-shadow:none !important;
 }
