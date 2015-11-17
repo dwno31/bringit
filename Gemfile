@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-
+gem 'gcm'
 gem 'figaro'
 gem 'faye'
 gem 'thin'
