@@ -90,7 +90,7 @@ function order_intoline(){
     intoline_list.push($(e).attr('id'));
   });
   $.ajax({
-    url:"http://bringit-production-dwno31.c9.io/provider/inline_list",
+    url:"/provider/inline_list",
     method: "POST",
     data: {intoline_list :intoline_list},
     success:function(){
@@ -113,7 +113,7 @@ function order_complete(){
   });
   
   $.ajax({
-    url:"http://bringit-production-dwno31.c9.io/provider/complete_list",
+    url:"/provider/complete_list",
     method: "POST",
     data: {complete_list :complete_list},
     success:$("#order_afterline>.order_receipt.order_active").remove(),

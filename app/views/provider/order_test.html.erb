@@ -4,7 +4,7 @@ function test_push(){
   
   var test_input = $("#test").val()
   $.ajax({
-    url: "http://bringit-production-dwno31.c9.io/main/order_success",
+    url: "/main/order_success",
     method: "POST",
     data: JSON.parse(test_input),
     success: function(){ $("#test").val("")}
