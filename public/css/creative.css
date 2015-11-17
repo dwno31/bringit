@@ -4,6 +4,12 @@
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
+.carousel-control{
+color:gainsboro!important;
+}
+footer{
+	background:#363636;
+}
 html,
 body {
     width: 100%;
