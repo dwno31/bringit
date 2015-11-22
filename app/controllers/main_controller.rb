@@ -1,6 +1,11 @@
 class MainController < ApplicationController
+  require 'gcm'
   require 'eventmachine'
   
+  def landing_page
+	render :layout => false
+
+  end
   def hello
     
     demo_hash = [{"name" =>"아메리카노", "count" => "1", "price" => "1500", "type" =>0, "hot_cold"=>0,"options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500" },{ "name" =>"아이스 아메리카노", "count" => "1", "price" => "1800", "type" => 0, "hot_cold"=> 1,"options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500" },{ "name" =>"카페라떼", "count" => "1", "price" => "1800","hot_cold"=> 0, "type"=> 0,  "options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500,우유:우유_0/저지방우유_0/두유_0" },{"name" =>"아이스 카페라떼", "count" => "1", "price" => "2000", "type" => 0, "hot_cold"=> 1,"options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500,우유:우유_0/저지방우유_0/두유_0" }, { "name" =>"카페모카", "count" => "1", "price" => "1800", "hot_cold"=> 0, "type"=> 0, "options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500" }, { "name" =>"아이스 카페모카", "count" => "1", "price" => "2000", "type" => 0, "hot_cold"=> 1, "options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500" }, { "name" =>"그린티라뗴", "count" => "1", "price" => "1500", "hot_cold"=>1, "type"=>1, "options_list" => "Size:Regular_0/Large_300/Jumbo_500,우유:우유_0/저지방우유_0/두유_0" },{ "name" =>"딸기스무디", "count" => "1", "price" => "2000","hot_cold"=> 1, "type"=> 1,  "options_list" => "Size:Regular_0/Large_300/Jumbo_500" },]
