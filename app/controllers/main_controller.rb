@@ -39,7 +39,7 @@ class MainController < ApplicationController
     
     @default_order = user_come.orders.first
     active_order = user_come.orders.where("check_active=? and order_time>=?",true, Date.today).take
-    
+    logger.info active_order
       
     if @default_order.nil? #오더가 없다
         user_come.save
@@ -63,12 +63,8 @@ class MainController < ApplicationController
         render json: receipt_page #영수증 정보를 넘겨주는것
       
       else #오더가 있는데 액티브가 없어
-        
-        @basic_order = JSON.parse(@default_order.to_json)
-        @basic_order["order_time"] = DateTime.parse(@basic_order["order_time"]).strftime("%Y/%m/%d %H:%M")   
-        @basic_order["cafe"]=Shop.find(@basic_order["shop_id"]).shop_name        
         user_come.save      
-        render json: @basic_order
+        render json: "" 
       end
     end
     
