@@ -33,9 +33,9 @@ class MainController < ApplicationController
     user_come.gcmid = params[:gcm_id]
     
     @default_order = user_come.orders.first
-    active_order = user_come.orders.where("check_active=?",true).take
+    active_order = user_come.orders.where("check_active=? and order_time>=?",true, Date.today).take
     
-    
+      
     if @default_order.nil? #오더가 없다
         user_come.save
         render text: ""
