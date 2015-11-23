@@ -173,7 +173,8 @@
   
   function modify_long(menu_id){
     current_long = $("#"+menu_id+"long_option");
-    $("#message-text").val($("#"+menu_id+"long_option").val());
+    $("#message-text").val($("#"+menu_id+"long_option").val()).focus();
+    
     $("#menu_id_modal").html(menu_id);
     $('#long_option_modal').modal('toggle');
     
