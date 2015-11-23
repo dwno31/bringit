@@ -52,7 +52,7 @@
         <span>추가사항</span>
       </div>
       <div class="adjust_right long_option" style="height:5vh; width:40%;border-bottom:solid 1px black;">
-        <input type=text class=long_option id=<%=menu.id%>long_option>
+        <input type=text class=long_option id=<%=menu.id%>long_option disabled>
       </div>
     </div>
     <div onclick="add_order(<%=menu.id%>)"class="menu_adjust add_order">
@@ -182,7 +182,9 @@
     menu_id = $("#menu_id_modal").html();
     $("#"+menu_id+"long_option").val($("#message-text").val());
     // document.getElementById(menu_id+"long_option").innerHTML = $("#message-text").val()
-    $("#long_option_modal").modal('toggle');
+    $("#long_option_modal").on('show.bs.modal', function(){
+		$("message-text").addClass('active').focus();
+	});
     
   };
   
