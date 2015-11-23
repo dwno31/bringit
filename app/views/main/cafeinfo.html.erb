@@ -183,9 +183,7 @@
     menu_id = $("#menu_id_modal").html();
     $("#"+menu_id+"long_option").val($("#message-text").val());
     // document.getElementById(menu_id+"long_option").innerHTML = $("#message-text").val()
-    $("#long_option_modal").on('show.bs.modal', function(){
-		$("message-text").addClass('active').focus();
-	});
+    $("#long_option_modal").modal('toggle');
     
   };
   
