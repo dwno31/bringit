@@ -1,4 +1,7 @@
 
+<div id="loading">
+  <!--<img id="loading-image" src="/img/loader.gif" alt="Loading..." />-->
+</div>
 <script src="/custom_bt/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="/custom_bt/css/bootstrap.min.css">
 <% @menulist.each do|menu| %>
@@ -182,5 +185,9 @@
     $("#long_option_modal").modal('toggle');
     
   };
+  
+  $(window).load(function() {
+    $('#loading').hide();
+  });
 
 </script>

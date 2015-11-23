@@ -2,6 +2,34 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+//---------------------page loader---------------
+
+#loading {
+   width: 100%;
+   height: 100%;
+   top: 0px;
+   left: 0px;
+   position: fixed;
+   display: block;
+   opacity: 0.7;
+   background-color: #fff;
+   z-index: 99;
+   text-align: center;
+   background-image:url('/img/loader.gif');
+   background-size:30% 30%;
+   background-repeat:no-repeat;
+   background-position:center;
+}
+
+// #loading-image {
+//   position: absolute;
+//   top: 100px;
+//   left: 240px;
+//   z-index: 100;
+// }
+
+
+//-----------------메뉴박스---------
 
 .menuitem{  //메뉴 박스 하나 전체
   padding:10px;
