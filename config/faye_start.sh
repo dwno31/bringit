@@ -13,7 +13,7 @@ startme() {
 }
 
 stopme() {
-    run "pkill -f $PID"
+    run "sudo pkill -f $PID"
 }
 
 run () {
