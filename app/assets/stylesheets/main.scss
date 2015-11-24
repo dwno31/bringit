@@ -2,6 +2,11 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+body{
+  height:100%;
+  width:100%;
+}
+
 //---------------------page loader---------------
 
 #loading {
@@ -93,14 +98,13 @@
       text-align:right;
     }
       .image_icon{
-        height:15px;
-        width:15px;
+        height:100%;
         width:20%;
         float:left;
         text-align:center;
       }
       .adjust_value{
-       width:59%;
+       width:58%;
        text-align:center;
        float:left;
       }

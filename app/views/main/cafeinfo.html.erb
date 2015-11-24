@@ -52,7 +52,7 @@
         <span>추가사항</span>
       </div>
       <div class="adjust_right long_option" style="height:5vh; width:40%;border-bottom:solid 1px black;">
-        <input type=text class=long_option id=<%=menu.id%>long_option style="background:none;" disabled>
+        <input type=text class=long_option id=<%=menu.id%>long_option style="background:none;" placeholder="입력하세요" disabled>
       </div>
     </div>
     <div onclick="add_order(<%=menu.id%>)"class="menu_adjust add_order">
@@ -114,7 +114,7 @@
       $("#"+menu_id+"detail").show();
       $('html, body').animate({
         scrollTop: $("#"+menu_id+"menu").offset().top
-      }, 800);
+      }, 700);
     } else {
         $("#"+menu_id+"detail").hide();
     };
@@ -141,11 +141,15 @@
     if (type === "b"){
       if (current_size<2){
         current_size++;
+      }else{
+       window.navigator.vibrate(200); 
       };
       
     }else{
       if (current_size>0){
         current_size--;
+      }else{
+        window.navigator.vibrate(200);  
       };
     };
     $("#"+menu_id+"size").html(Object.keys(size_match)[current_size]);
@@ -160,11 +164,15 @@
     if (type === "add"){
       if (current_shot<2){
         current_shot++;
+      }else{
+        window.navigator.vibrate(200); 
       };
       
     }else{
       if (current_shot>0){
         current_shot--;
+      }else{
+        window.navigator.vibrate(200);  
       };
     };
     $("#"+menu_id+"shot").html(Object.keys(shot_match)[current_shot]);
@@ -186,9 +194,9 @@
     $("#long_option_modal").modal('toggle');
     
   };
-  
-  $(window).load(function() {
-    $('#loading').hide();
-  });
+    
+    $(window).load(function() {
+      $('#loading').hide();
+    });
 
 </script>
