@@ -4,7 +4,7 @@ et -e
 TIMEOUT=${TIMEOUT-60}
 APP_ROOT=/home/ubuntu/bringit
 PID=$APP_ROOT/tmp/pids/thin.pid
-CMD="cd $APP_ROOT; rackup -D -P $PID $APP_ROOT/faye.ru -s thin -E production -o 0.0.0.0"
+CMD="cd $APP_ROOT; rackup -p 9292 -D -P $PID $APP_ROOT/faye.ru -s thin -E production -o 0.0.0.0"
 AS_USER=ubuntu
 set -u
 
