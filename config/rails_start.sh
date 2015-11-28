@@ -6,7 +6,7 @@ set -e
 TIMEOUT=${TIMEOUT-60}
 APP_ROOT=~/bringit
 PID=$APP_ROOT/tmp/pids/server.pid
-CMD="cd $APP_ROOT; rvmsudo rails s -d -p 80 -b 0.0.0.0 --pid $PID"
+CMD="cd $APP_ROOT;rvmsudo rails s -d -p 80 -b 0.0.0.0 --pid $PID"
 AS_USER=ubuntu
 set -u
 
@@ -15,7 +15,7 @@ startme() {
 }
 
 stopme() {
-    run "sudo pkill rails"
+    run "sudo kill -9 $PID"
 }
 
 run () {

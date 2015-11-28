@@ -1,8 +1,7 @@
-<script type="text/javascript" src="http://bringit.kr/faye/client.js"></script>
+<script src="https://js.pusher.com/3.0/pusher.min.js"></script>
 <script type="text/javscript" src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/vendors/jquery.slimscroll.min.js"></script>
 <script>
 
-var client = new Faye.Client('http://bringit.kr/faye');
 
 function bring_timer(name){
       
@@ -224,7 +223,6 @@ function minute_to_time(time_input){
 }
 
 function receipt_order(){
-  
   var receipt_object = $("#order_beforeline span[name=time_after]")
   var order_remaintime = [];
   
@@ -239,19 +237,20 @@ function receipt_order(){
   console.log(order_remaintime);
   
   for(i=0;i<receipt_object.length;i++){
-    $("#"+order_remaintime[i][0]).css("order",i)
-    
+	$("#order_beforeline").append($("#"+order_remaintime[i][0]));    
     
   };
-  
 };
 
-
-var subscription = client.subscribe('/foo', function(message) {
-  // handle message
+    var pusher = new Pusher('2ba19614def775bcd1a8', {
+      encrypted: true
+    });
+    var channel = pusher.subscribe('order_cast');
+    channel.bind('new_order', function(message) {
+      
   var pick_left = second_to_minute(message.pickup_time);
+
  
-  
   $("#order_beforeline").append("<div onclick=\"select_order('#order_"+message.order_number+"')\" id=order_"+message.order_number+" class=\"order_receipt\"><div class=\"order_number\"><span>"+message.order_number+"</span></div><div class=\"order_info\"></div> <div class=info_footer>브링시간<span name=time_after id=order_"+message.order_number+"_timer>"+pick_left+"</span>후</div></div>");
    
   message.menu.forEach(function(entry){
@@ -263,6 +262,12 @@ var subscription = client.subscribe('/foo', function(message) {
 // });
   receipt_order();
 
-});
-  
+
+
+    });
+
+
+//var subscription = client.subscribe('/foo', function(message) {
+  // handle message
+//});
 </script>

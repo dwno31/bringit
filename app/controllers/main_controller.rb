@@ -1,7 +1,6 @@
 class MainController < ApplicationController
   require 'gcm'
   require 'eventmachine'
-  
   def landing_page
 	render :layout => false
 
@@ -73,18 +72,18 @@ class MainController < ApplicationController
   def default_order # default 값 불러오기
     
     user_sid = params[:user_sim]
-    user_come = Customer.find_by(customer_simid: user_sid)
+    user_come = Customer.where("customer_simid=?",user_sid).take
     
     @default_order = user_come.orders.first
-    @basic_order = JSON.parse(@default_order.to_json)
-    @basic_order["order_time"] = DateTime.parse(@basic_order["order_time"]).strftime("%Y/%m/%d %H:%M")   
-    @basic_order["cafe"] = Shop.find(@basic_order["shop_id"]).shop_name
-   
+  
     if @default_order.nil? #오더가 없다
-        user_come.save
+        
         render text: ""
     else  #첫 오더가 있으면
-        user_come.save
+		@basic_order = JSON.parse(@default_order.to_json)
+		@basic_order["order_time"] = DateTime.parse(@basic_order["order_time"]).strftime("%Y/%m/%d %H:%M")   
+		@basic_order["cafe"] = Shop.find(@basic_order["shop_id"]).shop_name
+        
         logger.info @basic_order
         render json: @basic_order
     end
@@ -199,12 +198,25 @@ class MainController < ApplicationController
         "order_number" => order_whole.daily_number
       }
     
-    EM.run {
-      client = Faye::Client.new('http://bringit.kr:9292/faye')
-      client.publish('/foo', push_order)
-    }
-    
-    
+	logger.info push_order
+#    EM.run do 
+#      client = Faye::Client.new('http://bringit.kr/faye')
+#      publication = client.publish('/foo', push_order)
+#	  publication.callback do
+#        puts "[PUBLISH SUCCEEDED]"
+#        EM.stop_event_loop
+#      end
+#      publication.errback do |error|
+#       puts "[PUBLISH FAILED] #{error.inspect}"
+#       EM.stop_event_loop
+#      end
+#    end
+#    message = {:channel => '/foo', :data => push_order
+#    uri = URI.parse("http://bringit.kr/faye")
+#    Net::HTTP.post_form(uri, :message => message.to_json)
+		
+	Pusher.trigger('order_cast','new_order',push_order)
+	    
     render_json = JSON.parse(input_order.to_json)
     render_json["order_time"] = DateTime.parse(render_json["order_time"]).strftime("%Y/%m/%d %H:%M")   
     render_json["cafe"] = Shop.find(render_json["shop_id"]).shop_name
@@ -229,6 +241,8 @@ class MainController < ApplicationController
     }
     logger.info push_orderline
     
+	Pusher.trigger('order_add','add_order', push_orderline)
+
     gcm = GCM.new("AIzaSyAXelTBPvT_N9xyAtj5OqmnZuY_mhKeLIo")
     registration_ids = [input_user.gcmid]  
     options = {data: {title: "order", message: push_orderline}}

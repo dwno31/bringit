@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-
-gem 'faye-rails'
+gem 'pusher'
+gem 'rest-client'
 gem 'spreadsheet'
 gem 'to_xls'
 gem 'devise'

@@ -16,8 +16,7 @@ module Bringit
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     config.time_zone = 'Seoul'
     config.active_record.default_timezone = :local
-    config.middleware.delete Rack::Lock 
-	config.middleware.use FayeRails::Middleware, mount: '/faye', :timeout => 25    
+   
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
