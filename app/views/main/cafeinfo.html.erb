@@ -85,24 +85,27 @@
 
 
 <script>
+    var size_match = {'Regular':0, 'Large':1, 'Jumbo':2};
+    var shot_match = {'None':0, '1샷 추가':1, '2샷 추가':2};
+
   function add_order(menu_id){
     var menu_id = menu_id
     var menu_quantity = $("#"+menu_id+"quantity").text();
     var menu_size = $("#"+menu_id+"size").text();
     var menu_shot = $("#"+menu_id+"shot").text();
     var menu_long_option = $("#"+menu_id+"long_option").val();
-    var user_sim = "<%=@user_sim%>"
-    var send_menu = {'id': menu_id, 'count': menu_quantity, 'size': menu_size, 'shot': menu_shot, 'long_option': menu_long_option, 'user_sim': user_sim};
-    console.log(send_menu);
-    
-    $.ajax({
-      url:"/main/add_order",
-      data: send_menu,
-      dataType: 'json',
-      method: "POST",
-      success: function(){ $("#"+menu_id+"detail").hide();}
-      
-    });
+   
+
+  var menu_title = $("#"+menu_id+"menu>div>div.menutitle_kr>span").text();
+  var shot_price = 300;
+  var size_price = size_match[menu_size]*300
+  var menu_price = parseInt($("#"+menu_id+"menu>div>div.menuprice>span").text())+ shot_match[menu_shot] * shot_price + size_price
+  var to_android = {'menu_title': menu_title,'menu_price':menu_price*parseInt(menu_quantity), 'count':menu_quantity, 'menu_option':"샷 추가:"+menu_shot+",Size:"+menu_size, 'long_option':menu_long_option}; 
+  console.log(to_android);
+  window.android.basket(JSON.stringify(to_android)); 
+  $("#"+menu_id+"detail").hide();
+
+
   };
   
   function toggle_detail(menu_id){
@@ -133,22 +136,18 @@
   
   function order_size(type, id){
     menu_id = id;
-    var size_match = {'Regular':0, 'Large':1, 'Jumbo':2};
     current_size = size_match[$("#"+menu_id+"size").html()];
     console.log(current_size);
-    
+    window.android.vibration(); 
     if (type === "b"){
       if (current_size<2){
         current_size++;
-      }else{
-       window.navigator.vibrate(200); 
       };
+      
       
     }else{
       if (current_size>0){
         current_size--;
-      }else{
-        window.navigator.vibrate(200);  
       };
     };
     $("#"+menu_id+"size").html(Object.keys(size_match)[current_size]);
@@ -156,22 +155,17 @@
   
   function order_shot(type, id){
     menu_id = id;
-    var shot_match = {'None':0, '1샷 추가':1, '2샷 추가':2};
     current_shot = shot_match[$("#"+menu_id+"shot").html()];
     console.log(current_shot);
-    
+    window.android.vibration();
     if (type === "add"){
       if (current_shot<2){
         current_shot++;
-      }else{
-        window.navigator.vibrate(200); 
       };
       
     }else{
       if (current_shot>0){
         current_shot--;
-      }else{
-        window.navigator.vibrate(200);  
       };
     };
     $("#"+menu_id+"shot").html(Object.keys(shot_match)[current_shot]);

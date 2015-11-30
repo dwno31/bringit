@@ -195,7 +195,14 @@ class ProviderController < ApplicationController
      
   end
   
-  
+  def admin_page
+	@orders = Order.all
+	
+			
+
+
+  end  
+
   def order_test
     
   end

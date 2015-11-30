@@ -60,7 +60,6 @@ GEM
   specs:
     addressable (2.3.8)
     arel (6.0.3)
-    bcrypt (3.1.10)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.2.2)
@@ -75,13 +74,6 @@ GEM
     cookiejar (0.3.2)
     daemons (1.2.3)
     debug_inspector (0.0.2)
-    devise (3.5.2)
-      bcrypt (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (>= 3.2.6, < 5)
-      responders
-      thread_safe (~> 0.1)
-      warden (~> 1.2.3)
     domain_name (0.5.25)
       unf (>= 0.0.5, < 1.0.0)
     em-http-request (1.1.2)
@@ -143,7 +135,6 @@ GEM
     netrc (0.11.0)
     nokogiri (1.6.6.4)
       mini_portile (~> 0.6.0)
-    orm_adapter (0.5.0)
     pusher (0.15.1)
       httpclient (~> 2.5)
       multi_json (~> 1.0)
@@ -163,13 +154,19 @@ GEM
     rake (10.4.2)
     rdoc (4.2.0)
     ref (2.0.0)
-    responders (2.1.0)
-      railties (>= 4.2.0, < 5)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    roo (2.2.0)
+      nokogiri (~> 1)
+      rubyzip (~> 1.1, < 2.0.0)
+    roo-xls (1.0.0)
+      nokogiri
+      roo (>= 2.0.0beta1, < 3)
+      spreadsheet (> 0.9.0)
     ruby-ole (1.2.11.8)
+    rubyzip (1.1.7)
     sass (3.4.19)
     sass-rails (5.0.4)
       railties (>= 4.0.0, < 5.0)
@@ -211,8 +208,6 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.1)
-    warden (1.2.3)
-      rack (>= 1.0)
     web-console (2.2.1)
       activemodel (>= 4.0)
       binding_of_caller (>= 0.7.2)
@@ -228,7 +223,6 @@ PLATFORMS
 DEPENDENCIES
   byebug
   coffee-rails (~> 4.1.0)
-  devise
   faye
   figaro
   gcm
@@ -238,6 +232,8 @@ DEPENDENCIES
   pusher
   rails (~> 4.2.4)!
   rest-client
+  roo
+  roo-xls
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   spreadsheet
