@@ -14,3 +14,18 @@
  *= require_self
  *= require_jquery
  */
+@font-face {
+    font-family: 'Spoqa Han Sans';
+    font-weight: 400;
+    src: /*local('SpoqaHanSans-Regular'), local('SpoqaHanSans-Regular'),*/
+    url(file:///app/src/main/assets/SpoqaHanSans-Regular.ttf) format('truetype'),
+    url(https://cdn.rawgit.com/spoqa/spoqa-han-sans/master/Subset/SpoqaHanSans/Spoqa%20Han%20sans_subset%28webfont%20inclued%29/SpoqaHanSans-Regular/SpoqaHanSans-Regular.ttf) format('truetype')
+}
+* {
+  font-family: 'Spoqa Han Sans', 'Spoqa Han Sans JP', 'Sans-serif';
+}
+.hevi{
+  font-size:3em;
+  font-family: "Sans-serif";
+}
+

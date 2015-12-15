@@ -20,7 +20,6 @@ class ProviderController < ApplicationController
     
   end
   
-#   {"order":"[{\"name\":\"아이스 카페라떼\",\"count\":1,\"price\":4000,\"options_list\":\"샷 추가:None,Size:Regular\",\"long_option\":\"\"},{\"name\":\"아이스 카페라떼\",\"count\":1,\"price\":4000,\"options_list\":\"샷 추가:None,Size:Regular\",\"long_option\":\"\"},{\"name\":\"아이스 카페라떼\",\"count\":1,\"price\":4000,\"options_list\":\"샷 추가:None,Size:Regular\",\"long_option\":\"\"},{\"name\":\"아이스 카페라떼\",\"count\":1,\"price\":4000,\"options_list\":\"샷 추가:None,Size:Regular\",\"long_option\":\"\"}]", "order_number":"", "pickup_time":"2015.11.14 22:09", "payment_method":"kakaoPay", "has_pickedup":"false", "cafe":"뉴기니 버드", "user_sim":"8982301014000387835" }
   
   def view_order
     shop_id = session[:shop_id].to_i
@@ -28,6 +27,7 @@ class ProviderController < ApplicationController
     if shop_id == 0
       redirect_to '/provider/login'
     end
+	@shop_code = shop_id.to_s
     @beforeline_order = []
     push_order = {}
     Order.where("shop_id=? and order_time>=? and is_inline=?",shop_id,Time.current.in_time_zone.beginning_of_day,false).each do |order_whole|
@@ -66,8 +66,8 @@ class ProviderController < ApplicationController
         end  
         
         order_convert[:size] = option_size #사이즈도 담고
-        order_convert[:option] = option_shot+option_milk #두유나 샷추가는 그냥옵션에 담고
-        order_convert[:custom] = order[:long_option] #롱옵션은 커스텀에 담는다
+        order_convert[:shot] = option_shot #두유나 샷추가는 그냥옵션에 담고
+        order_convert[:custom] = option_milk + order[:long_option] #롱옵션은 커스텀에 담는다
         
         order_convert_list << order_convert #그리고 해당 해쉬값을 리스트에 담는다
       
@@ -122,8 +122,8 @@ class ProviderController < ApplicationController
         end  
         
         order_convert[:size] = option_size #사이즈도 담고
-        order_convert[:option] = option_shot+option_milk+order[:long_option] #두유나 샷추가는 그냥옵션에 담고
-        order_convert[:custom] = order[:long_option] #롱옵션은 커스텀에 담는다
+        order_convert[:shot] = option_shot #두유나 샷추가는 그냥옵션에 담고
+        order_convert[:custom] = option_milk + order[:long_option] #롱옵션은 커스텀에 담는다
         
         order_convert_list << order_convert #그리고 해당 해쉬값을 리스트에 담는다
       

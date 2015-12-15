@@ -1,18 +1,117 @@
 class MainController < ApplicationController
+  require 'rest-client'
+  require 'uri'
+  require 'net/http'
   require 'gcm'
   require 'eventmachine'
   def landing_page
 	render :layout => false
 
   end
-  def hello
+
+  def payco
+
+	input = params
+
+    input_order = Order.new  
+    input_order.customer_id = Customer.where("customer_simid=?",input[:user_sim]).take.id
+    input_order.shop_id = Shop.where("shop_name=?",input[:cafe]).take.id
+    input_order.order_list = input[:order]
+    input_order.order_time = Time.zone.parse(input[:pickup_time])
+    input_order.check_active = true
+    input_order.daily_number = "B"+(Order.where("order_time >=? and shop_id=?",Time.zone.now.beginning_of_day, input_order.shop_id).size+1).to_s
+    input_order.is_inline = false
+    order_numb = input_order.daily_number
+    input_order.payment_method = input[:payment_method]
+	shop_code = input_order.shop_id.to_s 
+
+	input_json ={
+
+		"sellerKey" => "3NVIIO",
+		"sellerOrderReferenceKey" => order_numb,
+		"totalPaymentAmt" => input_order.order_list.price,
+		"serviceUrl" => "http://bringit.kr/main/payco",
+		"returnUrl" => "http://bringit.kr/main/asdf",
+		"orderMethod" => "EASYPAY",
+		"inAppYn" => "Y",
+		"orderProducts" => [
+			{
+				"cpId" => "BRINGIT",
+				"productId" => "BRINGIT_EASYP",
+	            "productAmt"=> input_order.order_list.price, 
+		        "productPaymentAmt"=> input_order.order_list.price, 
+			    "sortOrdering"=> 1, 
+				"productName"=> input_order.order_list.name, 
+	            "orderQuantity"=> input_order.order_list.count, 
+		        "sellerOrderProductReferenceKey"=> Time.strptime(Time.zone.today.to_s, "%Y%m%d").in_time_zone.to_s+order_numb 
+			}
+		]
+	}
+
+	response = RestClient.post 'https://api-bill.payco.com/outseller/order/reserve', input_json.to_json, :content_type => :json, :accept => :json
     
-    demo_hash = [{"name" =>"아메리카노", "count" => "1", "price" => "1500", "type" =>0, "hot_cold"=>0,"options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500" },{ "name" =>"아이스 아메리카노", "count" => "1", "price" => "1800", "type" => 0, "hot_cold"=> 1,"options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500" },{ "name" =>"카페라떼", "count" => "1", "price" => "1800","hot_cold"=> 0, "type"=> 0,  "options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500,우유:우유_0/저지방우유_0/두유_0" },{"name" =>"아이스 카페라떼", "count" => "1", "price" => "2000", "type" => 0, "hot_cold"=> 1,"options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500,우유:우유_0/저지방우유_0/두유_0" }, { "name" =>"카페모카", "count" => "1", "price" => "1800", "hot_cold"=> 0, "type"=> 0, "options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500" }, { "name" =>"아이스 카페모카", "count" => "1", "price" => "2000", "type" => 0, "hot_cold"=> 1, "options_list" => "샷 추가:None_0/1샷 추가_300/2샷 추가_600,Size:Regular_0/Large_300/Jumbo_500" }, { "name" =>"그린티라뗴", "count" => "1", "price" => "1500", "hot_cold"=>1, "type"=>1, "options_list" => "Size:Regular_0/Large_300/Jumbo_500,우유:우유_0/저지방우유_0/두유_0" },{ "name" =>"딸기스무디", "count" => "1", "price" => "2000","hot_cold"=> 1, "type"=> 1,  "options_list" => "Size:Regular_0/Large_300/Jumbo_500" },]
-      
-    render json: demo_hash
+	#redirect_to controller: "main", action: "order_success", input: input
+
+  end
+
+  def hello
+     
+	input_json ={ 
+    #"sellerKey"=> "S0FSJE", 
+	"sellerKey"=> "3NVIIO",
+    "sellerOrderReferenceKey"=> "TESTORDERKEY01", 
+    "totalPaymentAmt"=> "1000",  
+    #"serviceUrl"=> "https://alpha-api-bill.payco.com/test/surl/ok",
+	"serviceUrl"=> "http://bringit.kr/main/hello",
+#	"serviceUrlParam"=> "{\"serviceUrlParam1\":\"data1\",\"serviceUrlParam2\":300}",
+    #"returnUrl"=> "http://demo-bill.payco.com:11111/result.nhn", 
+	"returnUrl"=> "http://bringit.kr/main/asdf",
+	#"returnUrlParam" => "{\"returnUrlParam1\":\"data1\",\"returnUrlParam2\":300}",
+#"&code=" + code + "&totalPaymentAmt=" + totalPaymentAmt +
+#		"&reserveOrderNo=" + reserveOrderNo + "&paymentCertifyToken=" + paymentCertifyToken
+	#"returnUrlParam" => "{\"sellerOrderReferenceKey\":\"TESTORDERKEY0000012\",\"totalPaymentAmt\":1000}",
+    "orderMethod"=> "EASYPAY", 
+	"orderChannel"=> "MOBILE",
+	"inAppYn"=>"Y",
+	"customUrlSchemeUseYn"=> "n",
+    "orderProducts"=> [ 
+        { 
+            #"cpId"=> "PARTNERTEST", 
+			"cpId"=> "BRINGIT",
+            #"productId"=> "PROD_EASY", 
+			"productId"=> "BRINGIT_EASYP",
+            "productAmt"=> "1", 
+            "productPaymentAmt"=> "1000", 
+            "sortOrdering"=> 1, 
+            "productName"=> "브링잇", 
+            "orderQuantity"=> 1, 
+            "sellerOrderProductReferenceKey"=> "TESTPRODKEY01" 
+        } 
+    ],
+	"extraData" => #[
+		{
+			"cancelMobileUrl" => "http://bringit.kr/asdf",
+			"viewOptions" => [
+				{
+					"showMobileTopGnbYn" => "n",
+					"iframeYn" => "n"
+				}
+			]	
+		}.to_json
+	#]
+}
+	
+	#response = RestClient.post 'https://alpha-api-bill.payco.com/outseller/order/reserve', input_json.to_json, :content_type => :json, :accept => :json
+	response = RestClient.post 'https://api-bill.payco.com/outseller/order/reserve', input_json.to_json, :content_type => :json, :accept => :json
+
+	logger.info input_json
+	logger.info response   
+	logger.info response.body
+	#temp = input_json.to_s +  response.to_s
+    render json: response 
+	#render json: temp
   
   end
-  
   
   def user_demo
     # income_user = Customer.where("customer_simid=?",params[:user_sim]).take
@@ -54,6 +153,9 @@ class MainController < ApplicationController
        
         if active_order.is_inline.nil?
           active_order.check_active = false
+		  active_order.save
+		elsif (active_order.order_time + 600 - DateTime.now)>0
+		  active_order.check_active = false
           active_order.save
         end
         
@@ -103,14 +205,37 @@ class MainController < ApplicationController
     cafe_id = params[:cafe_id] #클라이언트에서 선택한 카페의 id값을 받아온다
     hot_cold = params[:hot_cold].to_i
     @user_sim = params[:user_sim]
-    
+	@mod = params[:mod]
+   	@sim_serial = params[:sim_serial]
+	@shop_id = params[:shop_id].to_i
+	
     #DB에서 해당 카페의 정보를 찾는다
     selected_cafe = Shop.find(cafe_id.to_i)
     logger.info selected_cafe
     @menulist = selected_cafe.menus.where("hot_cold=?",hot_cold)
     # render json: menulist
   end
-  
+  def modify_daily
+	input_json = eval(params[:order])[0]
+	sim_serial = params[:sim_serial]
+	shop_id = params[:shop_id].to_i
+	selected_user = Customer.where("customer_simid=?",sim_serial).take
+	
+	#들어오는 order를 model에 맞추어 수정
+	input = [{"name" => input_json[:name],
+			  "price" => input_json[:price],
+			  "count" => input_json[:count],
+			  "options_list" => input_json[:options_list],
+			  "long_option" => input_json[:long_option]
+			}] 							
+	logger.info selected_user
+	daily_order = selected_user.orders.first	#해당 유저의 daily_order를 가져온다
+	daily_order.shop_id = shop_id
+	daily_order.order_list = input.to_s
+	daily_order.save
+		
+	render json: ""
+  end 
   def order_success #주문을 받아서 결제를 확인하고,  카페측으로 보내줍니다
       #해당 주문의 내용을 카페측으로 보내고, 주문을 active로 만듭니다
     input = params    
@@ -137,6 +262,7 @@ class MainController < ApplicationController
     input_order.is_inline = false
     order_numb = input_order.daily_number
     input_order.payment_method = input[:payment_method]
+	shop_code = input_order.shop_id.to_s 
     input_order.save
     
     #주문이 success하게되면, 해당 주문을 카페쪽 웹앱 클라이언트로 push해준다
@@ -186,8 +312,8 @@ class MainController < ApplicationController
       end  
       
       order_convert[:size] = option_size #사이즈도 담고
-      order_convert[:option] = option_shot+option_milk #두유나 샷추가는 그냥옵션에 담고
-      order_convert[:custom] = order[:long_option] #롱옵션은 커스텀에 담는다
+      order_convert[:option] = option_shot #두유나 샷추가는 그냥옵션에 담고
+      order_convert[:custom] = option_milk + order[:long_option] #롱옵션은 커스텀에 담는다
       
       order_convert_list << order_convert #그리고 해당 해쉬값을 리스트에 담는다
     end
@@ -215,8 +341,8 @@ class MainController < ApplicationController
 #    uri = URI.parse("http://bringit.kr/faye")
 #    Net::HTTP.post_form(uri, :message => message.to_json)
 		
-	Pusher.trigger('order_cast','new_order',push_order)
-	    
+	Pusher.trigger(shop_code,'new_order',push_order)
+	#여기서 order_cast 대신에 provider id 등으로 바꿔서 채널     
     render_json = JSON.parse(input_order.to_json)
     render_json["order_time"] = DateTime.parse(render_json["order_time"]).strftime("%Y/%m/%d %H:%M")   
     render_json["cafe"] = Shop.find(render_json["shop_id"]).shop_name
@@ -224,35 +350,5 @@ class MainController < ApplicationController
     logger.info "주문받은거"
     render json: render_json
   end
-  
-  def add_order
-    input_user = Customer.where("customer_simid=?",params[:user_sim]).take  
-    # input_user = Customer.find(2)
-    input_menu = Menu.find(params[:id].to_i)
-    input_price = input_menu.menu_price
-    
-    push_orderline = {
-      'menu_title' => input_menu.menu_title,
-      'count' => params[:count].to_i,
-      'hot_cold' => input_menu.hot_cold,
-      'menu_price' => input_price,
-      'menu_option' => ("샷 추가:"+params[:shot]+",Size:"+params[:size]),
-      'long_option' => params[:long_option]
-    }
-    logger.info push_orderline
-    
-	Pusher.trigger('order_add','add_order', push_orderline)
-
-    gcm = GCM.new("AIzaSyAXelTBPvT_N9xyAtj5OqmnZuY_mhKeLIo")
-    registration_ids = [input_user.gcmid]  
-    options = {data: {title: "order", message: push_orderline}}
-    response = gcm.send_notification(registration_ids, options)
-    puts response
-    
-    render json: {}
-    
-  end
-  
-  
   
 end

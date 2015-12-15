@@ -1,7 +1,6 @@
 // Place all the styles related to the main controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
-
 body{
   height:100%;
   width:100%;
@@ -74,14 +73,14 @@ body{
   }
 .menuaddorder{  //터치시 나타나는 주문메뉴
   margin-top:10px;
-  height:45vh;
+  height:48vh;
   display:block;
   font-weight:800;
   display:none;
 }
 //-----------------------주문 조정창--------------------------------------
   .menu_adjust{
-	margin-top:0.5em;
+	margin-top:0.6em;
     height:8vh;
     display:block;
     width:100%;
@@ -93,21 +92,26 @@ body{
     }
     .adjust_right{
       
-      width:50%;
+      width:65%;
       float:right;
       font-size:1.7em;
-      text-align:right;
+      text-align:center;
     }
+	  #adjust_quantity{
+		float:none;
+		margin:auto;
+
+	  ;}	
       .image_icon{
         height:100%;
         width:20%;
-        float:left;
+        display:inline-block; 
         text-align:center;
       }
       .adjust_value{
-       width:58%;
+       width:50%;
        text-align:center;
-       float:left;
+       display:inline-block;
       }
       
     
@@ -123,8 +127,9 @@ body{
       text-align:right;
      }
     .add_order{
+	  border-radius:10px;
       display:table;
-      height:8vh;
+      height:11vh;
       margin-top:10px;
     // padding:10px;
      background-color:#ffd34a;
@@ -132,7 +137,9 @@ body{
      
     }
     .add_order span {
-        font-size:1.2em;
+		color:rgba(01,06,00,0.55);
+        font-size:1.6em;
+		font-weight:600;
         display: table-cell;
         vertical-align: middle;
         line-height: normal;      

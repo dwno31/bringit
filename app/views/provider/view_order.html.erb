@@ -63,16 +63,6 @@ function bring_timer(name){
 
 
 
-$(document).ready(function() {
-    bring_timer('time_after');
-    $('#fullpage').fullpage({
-        controlArrows: false,
-        normalScrollElements: '.slide_whole'
-      
-      });
-    receipt_order();
-});
-
 function select_order(order_id){
     $(order_id).toggleClass("order_active");
     window.navigator.vibrate(100);
@@ -119,7 +109,6 @@ function order_complete(){
 
 
 </script>
-<%= render partial: "provider_top" %>
 <div id="fullpage">
     <div class="section">
       <div class="slide">
@@ -133,35 +122,26 @@ function order_complete(){
             </div>
             <div class="order_info">
               <% order[:menu].each do |menu_one| %>
+			  <div class="order_item">
               <div class="infos">
                 <p>
                   <span><%=menu_one[:menu]%></span>
                   <strong><%=menu_one[:size]%></strong><br>
-                  [옵션]<strong><%=menu_one[:option]%> // <%=menu_one[:custom]%></strong>
+				  [샷 추가]<strong><%=menu_one[:shot]%></strong><br>
+                  [추가 옵션]<strong><%=menu_one[:custom]%> // <%=menu_one[:custom]%></strong>
                 </p>
               </div>
               <div class=info_count>
                 <span><%=menu_one[:count]%></span>
               </div>
+			  </div>
               <% end %>
             </div> 
             <div class=info_footer>
-                브링시간<span name=time_after id="order_<%= order[:order_number]%>_timer"><%= (order[:pickup_time]/60).ceil %>:<%= (order[:pickup_time]%60).ceil %></span>후
+                약속시간<span name=time_after id="order_<%= order[:order_number]%>_timer"><%= (order[:pickup_time]/60).ceil %>:<%= (order[:pickup_time]%60).ceil %></span>후
             </div>
           </div>
           <% end %>
-        <div class=slide_footer>
-          <div class=footer_divider>
-            <button onclick=order_intoline() class=order_button>제작탭으로</button>
-          </div>
-          <div class=footer_divider>
-            <button onclick=order_complete() class=order_button>알람보내기</button>
-          </div>
-          
-        </div>  
-      
-        
-          
       </div>
       
       
@@ -178,20 +158,23 @@ function order_complete(){
             </div>
             <div class="order_info">
               <% order[:menu].each do |menu_one| %>
-              <div class="infos">
-                <p>
-                  <span><%=menu_one[:menu]%></span>
-                  <strong><%=menu_one[:size]%></strong><br>
-                  [옵션]<strong><%=menu_one[:option]%></strong>
-                </p>
-              </div>
-              <div class=info_count>
-                <span><%=menu_one[:count]%></span>
-              </div>
+			  <div class="order_item">
+				<div class="infos">
+					<p>
+						<span><%=menu_one[:menu]%></span>
+						<strong><%=menu_one[:size]%></strong><br>
+						[샷 추가]<strong><%=menu_one[:shot]%></strong>
+						[추가 옵션]<strong><%=menu_one[:custom]%></strong>
+					</p>
+				</div>
+				<div class=info_count>
+					<span><%=menu_one[:count]%></span>
+				</div>
+			  </div>
               <% end %>
             </div> 
             <div class=info_footer>
-                브링시간<span name=time_after id="order_<%= order[:order_number]%>_timer"><%= (order[:pickup_time]/60).ceil %>:<%= (order[:pickup_time]%60).ceil %></span>후
+                약속시간<span name=time_after id="order_<%= order[:order_number]%>_timer"><%= (order[:pickup_time]/60).ceil %>:<%= (order[:pickup_time]%60).ceil %></span>후
             </div>
           </div>
           <% end %>
@@ -203,6 +186,7 @@ function order_complete(){
     
   </div>
 </div>
+<button class=order_button>빌지넘기기</button>
 
 <script>
 
@@ -245,13 +229,13 @@ function receipt_order(){
     var pusher = new Pusher('2ba19614def775bcd1a8', {
       encrypted: true
     });
-    var channel = pusher.subscribe('order_cast');
+    var channel = pusher.subscribe('<%= @shop_code%>');
     channel.bind('new_order', function(message) {
       
   var pick_left = second_to_minute(message.pickup_time);
 
  
-  $("#order_beforeline").append("<div onclick=\"select_order('#order_"+message.order_number+"')\" id=order_"+message.order_number+" class=\"order_receipt\"><div class=\"order_number\"><span>"+message.order_number+"</span></div><div class=\"order_info\"></div> <div class=info_footer>브링시간<span name=time_after id=order_"+message.order_number+"_timer>"+pick_left+"</span>후</div></div>");
+  $("#order_beforeline").append("<div onclick=\"select_order('#order_"+message.order_number+"')\" id=order_"+message.order_number+" class=\"order_receipt\"><div class=\"order_number\"><span>"+message.order_number+"</span></div><div class=\"order_info\"></div> <div class=info_footer>약속시간<span name=time_after id=order_"+message.order_number+"_timer>"+pick_left+"</span>후</div></div>");
    
   message.menu.forEach(function(entry){
     console.log(entry);
@@ -265,6 +249,16 @@ function receipt_order(){
 
 
     });
+
+$(document).ready(function() {
+    bring_timer('time_after');
+    $('#fullpage').fullpage({
+        controlArrows: false,
+        normalScrollElements: '.slide_whole'
+      
+      });
+    receipt_order();
+});
 
 
 //var subscription = client.subscribe('/foo', function(message) {
