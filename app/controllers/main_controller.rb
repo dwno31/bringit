@@ -28,44 +28,55 @@ class MainController < ApplicationController
 	input_json ={
 
 		"sellerKey" => "3NVIIO",
-		"sellerOrderReferenceKey" => order_numb,
-		"totalPaymentAmt" => input_order.order_list.price,
-		"serviceUrl" => "http://bringit.kr/main/payco",
-		"returnUrl" => "http://bringit.kr/main/asdf",
+		"sellerOrderReferenceKey" => Date.current.strftime("%Y%m%d").to_s + order_numb,
+		"totalPaymentAmt" => eval(input_order.order_list)[0][:price],
+		#"totalPaymentAmt" => "1",
+		"serviceUrl" => "http://bringit.kr/main/asdf",
+		#"serviceUrlParams" => params.to_json,
+		"returnUrl" => "http://bringit.kr/main/order_success",
+		"returnUrlParam" => params.to_json,
 		"orderMethod" => "EASYPAY",
-		"inAppYn" => "Y",
+		"orderChannel"=> "MOBILE",
+		"inAppYn"=>"Y",
+		"customUrlSchemeUseYn"=> "n",
 		"orderProducts" => [
 			{
 				"cpId" => "BRINGIT",
 				"productId" => "BRINGIT_EASYP",
-	            "productAmt"=> input_order.order_list.price, 
-		        "productPaymentAmt"=> input_order.order_list.price, 
+	            "productAmt"=> eval(input_order.order_list)[0][:price], 
+				#"productAmt" => 1,
+		        "productPaymentAmt"=> eval(input_order.order_list)[0][:price], 
+				#"productPaymentAmt" => 1,
 			    "sortOrdering"=> 1, 
-				"productName"=> input_order.order_list.name, 
-	            "orderQuantity"=> input_order.order_list.count, 
-		        "sellerOrderProductReferenceKey"=> Time.strptime(Time.zone.today.to_s, "%Y%m%d").in_time_zone.to_s+order_numb 
+				"productName"=> eval(input_order.order_list)[0][:name], 
+	            "orderQuantity"=> eval(input_order.order_list)[0][:count], 
+		        "sellerOrderProductReferenceKey"=> Date.current.strftime("%Y%m%d").to_s + order_numb #Time.strptime(Time.zone.today.to_s, "%Y%m%d").in_time_zone.to_s+order_numb 
 			}
-		]
+		],
+		"extraData" => {"cancelMobileUrl" => "http://bringit.kr/main/order_cancel","viewOptions" => [{"showMobileTopGnbYn" => "n","iframeYn" => "n"}]}.to_json
 	}
 
 	response = RestClient.post 'https://api-bill.payco.com/outseller/order/reserve', input_json.to_json, :content_type => :json, :accept => :json
-    
+	
+	logger.info response
+	render json: response    
+
 	#redirect_to controller: "main", action: "order_success", input: input
 
   end
 
   def hello
-     
+
 	input_json ={ 
-    #"sellerKey"=> "S0FSJE", 
-	"sellerKey"=> "3NVIIO",
-    "sellerOrderReferenceKey"=> "TESTORDERKEY01", 
-    "totalPaymentAmt"=> "1000",  
+    "sellerKey"=> "S0FSJE", 
+	#"sellerKey"=> "3NVIIO",
+    "sellerOrderReferenceKey"=> "20151217-B7", 
+    "totalPaymentAmt"=> "3400",  
     #"serviceUrl"=> "https://alpha-api-bill.payco.com/test/surl/ok",
-	"serviceUrl"=> "http://bringit.kr/main/hello",
-#	"serviceUrlParam"=> "{\"serviceUrlParam1\":\"data1\",\"serviceUrlParam2\":300}",
+	"serviceUrl"=> "http://bringit.kr/main/asdf",
     #"returnUrl"=> "http://demo-bill.payco.com:11111/result.nhn", 
-	"returnUrl"=> "http://bringit.kr/main/asdf",
+	"returnUrl"=> "http://bringit.kr/main/order_success",
+	"returnUrlParam"=> params.to_json,
 	#"returnUrlParam" => "{\"returnUrlParam1\":\"data1\",\"returnUrlParam2\":300}",
 #"&code=" + code + "&totalPaymentAmt=" + totalPaymentAmt +
 #		"&reserveOrderNo=" + reserveOrderNo + "&paymentCertifyToken=" + paymentCertifyToken
@@ -76,16 +87,16 @@ class MainController < ApplicationController
 	"customUrlSchemeUseYn"=> "n",
     "orderProducts"=> [ 
         { 
-            #"cpId"=> "PARTNERTEST", 
-			"cpId"=> "BRINGIT",
-            #"productId"=> "PROD_EASY", 
-			"productId"=> "BRINGIT_EASYP",
-            "productAmt"=> "1", 
-            "productPaymentAmt"=> "1000", 
+            "cpId"=> "PARTNERTEST", 
+			#"cpId"=> "BRINGIT",
+            "productId"=> "PROD_EASY", 
+			#"productId"=> "BRINGIT_EASYP",
+            "productAmt"=> "3400", 
+            "productPaymentAmt"=> "3400", 
             "sortOrdering"=> 1, 
-            "productName"=> "브링잇", 
+            "productName"=> "고구마라떼", 
             "orderQuantity"=> 1, 
-            "sellerOrderProductReferenceKey"=> "TESTPRODKEY01" 
+            "sellerOrderProductReferenceKey"=> "20151217-B7" 
         } 
     ],
 	"extraData" => #[
@@ -101,8 +112,8 @@ class MainController < ApplicationController
 	#]
 }
 	
-	#response = RestClient.post 'https://alpha-api-bill.payco.com/outseller/order/reserve', input_json.to_json, :content_type => :json, :accept => :json
-	response = RestClient.post 'https://api-bill.payco.com/outseller/order/reserve', input_json.to_json, :content_type => :json, :accept => :json
+	response = RestClient.post 'https://alpha-api-bill.payco.com/outseller/order/reserve', input_json.to_json, :content_type => :json, :accept => :json
+	#response = RestClient.post 'https://api-bill.payco.com/outseller/order/reserve', input_json.to_json, :content_type => :json, :accept => :json
 
 	logger.info input_json
 	logger.info response   
@@ -112,7 +123,18 @@ class MainController < ApplicationController
 	#render json: temp
   
   end
-  
+ 
+  def cafe_status_check 
+
+	logger.info params
+	render json: "OK"
+
+  end
+
+  def order_cancel	
+	render layout: false
+  end
+ 
   def user_demo
     # income_user = Customer.where("customer_simid=?",params[:user_sim]).take
     default_order = Order.find(4)
@@ -238,7 +260,7 @@ class MainController < ApplicationController
   end 
   def order_success #주문을 받아서 결제를 확인하고,  카페측으로 보내줍니다
       #해당 주문의 내용을 카페측으로 보내고, 주문을 active로 만듭니다
-    input = params    
+	input = params    
     
     # demo_user = { 
     # "order" => menu, 옵션, 잔수
@@ -282,7 +304,7 @@ class MainController < ApplicationController
       order_convert[:count] = order[:count]#갯수 담고
       
       push_option = order[:options_list]  #옵션리스트 쫙 써있는거 분리한다
-      option_size = ""
+     option_size = ""
       option_milk = ""
       option_shot = ""
       logger.info push_option;
@@ -325,22 +347,7 @@ class MainController < ApplicationController
       }
     
 	logger.info push_order
-#    EM.run do 
-#      client = Faye::Client.new('http://bringit.kr/faye')
-#      publication = client.publish('/foo', push_order)
-#	  publication.callback do
-#        puts "[PUBLISH SUCCEEDED]"
-#        EM.stop_event_loop
-#      end
-#      publication.errback do |error|
-#       puts "[PUBLISH FAILED] #{error.inspect}"
-#       EM.stop_event_loop
-#      end
-#    end
-#    message = {:channel => '/foo', :data => push_order
-#    uri = URI.parse("http://bringit.kr/faye")
-#    Net::HTTP.post_form(uri, :message => message.to_json)
-		
+	
 	Pusher.trigger(shop_code,'new_order',push_order)
 	#여기서 order_cast 대신에 provider id 등으로 바꿔서 채널     
     render_json = JSON.parse(input_order.to_json)
@@ -348,7 +355,9 @@ class MainController < ApplicationController
     render_json["cafe"] = Shop.find(render_json["shop_id"]).shop_name
     logger.info render_json
     logger.info "주문받은거"
-    render json: render_json
+    #render json: render_json
+	@render_json = render_json.as_json
+	render layout: false
   end
   
 end

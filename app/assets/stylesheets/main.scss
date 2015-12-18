@@ -48,10 +48,11 @@ body{
   height:4em;
 }
   .menutitle_kr{
+	padding-top:10px;
     overflow:hidden;
     text-overflow: clip; 
     white-space:nowrap;
-    font-size:2em;
+    font-size:1.5em;
     width:70%;
     height:100%;
     float:left;
@@ -73,6 +74,7 @@ body{
   }
 .menuaddorder{  //터치시 나타나는 주문메뉴
   margin-top:10px;
+  margin-bottom:10px;
   height:48vh;
   display:block;
   font-weight:800;
@@ -88,13 +90,15 @@ body{
     .adjust_left{
       float:left; 
       font-weight:500;
-      font-size:1.5em; 
+      font-size:1em; 
+	  margin-top:0.3em;
     }
     .adjust_right{
       
       width:65%;
       float:right;
-      font-size:1.7em;
+	  height:1.7em;
+      font-size:1.4em;
       text-align:center;
     }
 	  #adjust_quantity{
@@ -138,7 +142,7 @@ body{
     }
     .add_order span {
 		color:rgba(01,06,00,0.55);
-        font-size:1.6em;
+        font-size:1.4em;
 		font-weight:600;
         display: table-cell;
         vertical-align: middle;

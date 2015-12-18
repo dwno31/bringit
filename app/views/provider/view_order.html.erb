@@ -109,11 +109,11 @@ function order_complete(){
 
 
 </script>
+<div class=view_order_icon></div>
 <div id="fullpage">
     <div class="section">
       <div class="slide">
         <div class="slide_whole" id="order_beforeline">
-          
           <% @beforeline_order.each do |order| %>
           <% logger.info order %>
           <div onclick="select_order('#order_<%=order[:order_number]%>')" id=order_<%=order[:order_number]%> class="order_receipt">
@@ -124,9 +124,11 @@ function order_complete(){
               <% order[:menu].each do |menu_one| %>
 			  <div class="order_item">
               <div class="infos">
-                <p>
+                <p class="item_title">
                   <span><%=menu_one[:menu]%></span>
-                  <strong><%=menu_one[:size]%></strong><br>
+                  <strong><%=menu_one[:size]%></strong>
+				</p>
+				<p class="item_option">
 				  [샷 추가]<strong><%=menu_one[:shot]%></strong><br>
                   [추가 옵션]<strong><%=menu_one[:custom]%> // <%=menu_one[:custom]%></strong>
                 </p>
@@ -186,10 +188,9 @@ function order_complete(){
     
   </div>
 </div>
-<button class=order_button>빌지넘기기</button>
+<button onclick="order_intoline()" id=order_button class=order_button>빌지넘기기</button>
 
 <script>
-
 function second_to_minute(second){
   var total_second = Math.floor(second);
   var left_minute = Math.floor(second/60);
@@ -239,7 +240,7 @@ function receipt_order(){
    
   message.menu.forEach(function(entry){
     console.log(entry);
-    $("#order_"+message.order_number+" > div.order_info").append("<div class=\"infos\"><p><span>"+entry.menu+"</span><strong> "+entry.size+"</strong><br>[옵션]<strong>"+entry.option+entry.custom+"</strong></p></div><div class=info_count><span>"+entry.count+"</span></div>");
+    $("#order_"+message.order_number+" > div.order_info").append("<div class=\"infos\"><p class=\"item_title\"><span>"+entry.menu+"</span><strong> "+entry.size+"</strong></p><p class=\"item_option\">[샷 추가]<strong>"+entry.option+"</strong><br>[추가 옵션]<strong>"+entry.custom+"</strong></p></div><div class=info_count><span>"+entry.count+"</span></div>");
   });
 
 //   $("#order_"+message.order_number+".order_info").append("");
@@ -254,9 +255,28 @@ $(document).ready(function() {
     bring_timer('time_after');
     $('#fullpage').fullpage({
         controlArrows: false,
-        normalScrollElements: '.slide_whole'
+        normalScrollElements: '.slide_whole',
+		onSlideLeave: function( anchorLink, index, slideIndex, direction, nextSlideIndex){
+            var leavingSlide = $(this);
+
+            //leaving the first slide of the 2nd Section to the right
+            if(index == 1 && slideIndex == 0 && direction == 'right'){
+				$(".order_button")[0].innerHTML = "음료나왔습니다";    
+				$("#order_button").attr("onclick","order_complete()");
+				console.log("1");
+            }
+
+            //leaving the 3rd slide of the 2nd Section to the left
+            if(index == 1 && slideIndex == 1 && direction == 'left'){
+                $(".order_button")[0].innerHTML = "빌지넘기기";
+				$("#order_button").attr("onclick","order_intoline()");
+				console.log("2");
+            }
+        },
+		scrollingSpeed:400
       
-      });
+
+     });
     receipt_order();
 });
 

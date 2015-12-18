@@ -1,3 +1,4 @@
+
 // Place all the styles related to the provider controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
@@ -34,8 +35,19 @@
  
 }
 
+.view_order_icon{
+ position:absolute;
+ z-index:2;
+ background-image: url("/loading_3.png");
+ background-size:100% 100%;
+ height:95px;
+ width:60px;
+ margin-top:10px;
+ margin-left:10px;
+ opacity:0.55555;
+}
 .order_receipt{
- background-color:white;
+ background:white;
  border-radius:3px;
  box-shadow: 5px 5px 5px #888888;
  margin:2%;
@@ -62,22 +74,31 @@
 }
 
 .order_info span{
- font-size:1.5em;
+ font-size:2em;
  font-weight:800;
 }
 
 .order_item{
  width:100%;
- height:60%;
+ height:100%;
+ border-bottom:solid 1px black;
 }
 .infos{
  float:left;
- width:90%;
+ width:100%;
  margin:none;
- border-bottom:1px solid black;
  height:100%;
 }
+.item_title{
+ font-size:1.2em;
+ text-align:center;
+ height:63%;
+}
+.item_option{
+
+}
 .info_count{
+ display:none;
  font-size:1.5em;
  font-weight:800;
  vertical-align:middle;
@@ -98,17 +119,7 @@
  font-weight:800;
 }
 
-.slide_footer{
- position:absolute;
- right:0;
- left:0;
- bottom:0;
- background:rgb(240,196,25);
- height:10%;
- text-align:center;
- vertical-align:center;
-}
-
+ 
 .order_button {
   -webkit-border-radius: 14;
   -moz-border-radius: 14;
@@ -124,7 +135,12 @@
   position:relative;
   bottom:7%;
   display:block;
-  
+      -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none; 
 }
 
 .order_button:hover {
@@ -132,12 +148,6 @@
   text-decoration: none;
 }
 
-
-.footer_divider{
- display:inline-block;
- width:49.5%;
- padding-top:15px;
-}
 
 //--------액션관련
 
