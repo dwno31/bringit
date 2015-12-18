@@ -16,6 +16,14 @@
  height:100%;
 }
 
+#order_beforeline{
+ background-image:url('/pv_bg_beforeinline.png');
+}
+#order_afterline{
+ background-image:url('/pv_bg_afterline.png');
+}
+
+
 .section{
  height:100vh!important;
 }
