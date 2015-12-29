@@ -233,15 +233,16 @@ class MainController < ApplicationController
         render json: [@basic_order,Shop.find(@basic_order["shop_id"].to_i)]
     end
   end
-  
+    
   def cafelist #카페 선택 화�
 	#shop 레코드에 지역도 추가.
 	#지역마다 가져오는 것으로 수정.
-	user_sim = params[:user_sim]
+	selected_user = Customer.where("customer_simid=?",params[:user_sim]).take
 	shop_location = params[:shop_location]
 	
-	@shop = Shop.where("shop_location=?",shop_location).order(location_distant: :desc)
-    
+	@shop = Shop.where("shop_location=?",shop_location).order(location_distant: :desc).as_json
+	@shop.each{|shop|shop["remaining_cups"] = MainHelper.check_coupon(params[:user_sim],shop["id"])} 
+logger.info @shop
     render json: @shop
     #카페 DB 필요함 
     #이름, 위치, 사진
