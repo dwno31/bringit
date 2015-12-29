@@ -29,6 +29,9 @@ class ProviderController < ApplicationController
     end
 	@shop_code = shop_id.to_s
     @beforeline_order = []
+	@day_order_history = Order.where("shop_id=? and order_time>=? and check_active=?",shop_id,Time.zone.now.beginning_of_day,false)	
+	logger.info @day_order_history.take
+	logger.info "오잉"
     push_order = {}
     Order.where("shop_id=? and order_time>=? and is_inline=?",shop_id,Time.current.in_time_zone.beginning_of_day,false).each do |order_whole|
     
@@ -157,9 +160,10 @@ class ProviderController < ApplicationController
       order_record = Order.where("daily_number=? and order_time>=?",order_number,Time.zone.now.beginning_of_day).take
     #해당 레코드의 status를 inline으로 바꾼다
       order_record.is_inline = true
+	  order_record.inline_time = Time.zone.now
       order_record.save
     end
-    
+   
     render text: ""
     
   end
@@ -177,12 +181,11 @@ class ProviderController < ApplicationController
       order_record = Order.where("daily_number=? and order_time>=?",order_number,Time.zone.now.beginning_of_day).take
     #해당 레코드의 status를 inline으로 바꾼다
       order_record.is_inline = nil
-      
+    #해당 레코드의 완료 시간을 기록한다
+	  order_record.complete_time = Time.zone.now  
     
     #해당 레코드의 주인의 Customer를 호출해서 gcmid를 받아와서 push를 보낸다  
-    logger.info order_record.customer_id
     registration_ids = [Customer.find(order_record.customer_id).gcmid]  
-    logger.info registration_ids
     options = {data: {title: "브링잇", message: "주문하신 음료가 나왔어요!"}}
     response = gcm.send_notification(registration_ids, options)
     puts response
@@ -207,5 +210,33 @@ class ProviderController < ApplicationController
     
   end
   
-  
+  def shop_admin
+
+
+  end
+
+  def add_menu
+	shop_id = params[:shop_id].to_i
+	option = params[:option]
+	menus = params[:menus]
+	
+	menus.split('\r\n').each do |menu_whole|
+		menu_seperate = menu_whole.split('\t')
+
+		new_menu = Menu.new
+		new_menu.shop_id = shop_id
+
+		new_menu.menu_option = option
+		if menu_seperate!=""
+			new_menu.menu_title = menu_seperate[0]
+			new_menu.menu_price = menu_seperate[1].to_i
+			new_menu.hot_cold = menu_seperate[2].to_i
+			new_menu.caffeine = menu_seperate[3].to_i
+			new_menu.save
+		end
+		logger.info new_menu
+	end
+	
+	redirect_to :back	
+  end 
 end

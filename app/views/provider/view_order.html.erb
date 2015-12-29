@@ -1,5 +1,7 @@
 <script src="https://js.pusher.com/3.0/pusher.min.js"></script>
-<script type="text/javscript" src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/vendors/jquery.slimscroll.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.7.4/vendors/jquery.slimscroll.min.js"></script>
+<script type="text/javascript" src="/custom_bt/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="/custom_bt/css/bootstrap.min.css">
 <script>
 
 
@@ -130,7 +132,7 @@ function order_complete(){
 				</p>
 				<p class="item_option">
 				  [샷 추가]<strong><%=menu_one[:shot]%></strong><br>
-                  [추가 옵션]<strong><%=menu_one[:custom]%> // <%=menu_one[:custom]%></strong>
+                  [추가 옵션]<strong><%=menu_one[:custom]%></strong>
                 </p>
               </div>
               <div class=info_count>
@@ -189,7 +191,43 @@ function order_complete(){
   </div>
 </div>
 <button onclick="order_intoline()" id=order_button class=order_button>빌지넘기기</button>
-
+<button onclick="order_history()" id=history_button class=history_button>H</button>
+<div class="modal fade" id=history_modal tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">주문 내역</h4>
+      </div>
+      <div class="modal-body">
+		<table border='1' style='width:100%;'>
+			<tr>
+				<td>날짜</td>
+				<td>주문번호</td>
+				<td>주문메뉴</td>
+				<td>약속시간</td>
+				<td>인라인 시간</td>
+				<td>완료 시간</td>
+			</tr>
+			<% @day_order_history.each do |record|%>
+			<tr>
+				<td><%= record.order_time.to_date %></td>
+				<td><%= record.daily_number%></td>
+					<% menu_info = eval(record.order_list)[0] %>
+				<td><%= menu_info[:name]%>//<%= menu_info[:option_list]%></td>
+				<td><%= record.order_time.strftime("%p %I:%M")%></td>
+				<td><%= record.inline_time.strftime("%p %I:%M")%></td>
+				<td><%= record.complete_time.strftime("%p %I:%M")%></td>
+			</tr>		
+			<% end %>
+		</table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <script>
 function second_to_minute(second){
   var total_second = Math.floor(second);
@@ -205,6 +243,11 @@ function minute_to_time(time_input){
  var mixed_time = input_time.split(":");
  
  return (parseInt(mixed_time[0])*60+parseInt(mixed_time[1])); 
+}
+
+function order_history(){
+ $('#history_modal').modal('toggle');
+ 
 }
 
 function receipt_order(){

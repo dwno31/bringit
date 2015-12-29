@@ -17,10 +17,18 @@
 }
 
 #order_beforeline{
- background-image:url('/pv_bg_beforeinline.png');
+ background-image:url('/pv_bg_beforeline.png');
+ background-position:center;
+ background-repeat:no-repeat;
+ background-size:40%;
+ z-index:-1;
 }
 #order_afterline{
- background-image:url('/pv_bg_afterline.png');
+ background-image:url('/bringit_pvd_bg2.png');
+ background-position:center;
+ background-repeat:no-repeat;
+ background-size:40%;
+ z-index:-1;
 }
 
 
@@ -141,7 +149,7 @@
   margin:auto;
   border:none;
   position:relative;
-  bottom:7%;
+  bottom:9%;
   display:block;
       -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -156,6 +164,29 @@
   text-decoration: none;
 }
 
+.history_button{
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 1.2em;
+  font-weight:900;
+  background: #F0C401;
+  padding: 13px;
+  text-decoration: none;
+  margin-left:auto;
+  right:10px;
+  border:none;
+  position:relative;
+  bottom:15%;
+  display:block;
+      -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none; 
+
+
+}
 
 //--------액션관련
 

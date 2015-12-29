@@ -24,6 +24,7 @@
        <div class=adjust_value id=adjust_quantity><span id=<%=menu.id%>quantity>1</span></div>
      </div>
     </div>
+	<% if menu.menu_option.include? "Size" %>
     <div class="menu_adjust adjust_size">
       <div class=adjust_left>
         <span>사이즈</span>
@@ -34,6 +35,7 @@
         <div onclick="order_size('b', <%=menu.id%>)"class=image_icon><img class=right_arrow src=/img/right_arrow.jpg></div>
       </div>
     </div>
+	<% end %>
     <div class="menu_adjust adjust_shot ">
       <div class=adjust_left>
         <span>샷 추가</span>

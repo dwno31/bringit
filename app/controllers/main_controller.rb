@@ -15,7 +15,7 @@ class MainController < ApplicationController
 
     input_order = Order.new  
     input_order.customer_id = Customer.where("customer_simid=?",input[:user_sim]).take.id
-    input_order.shop_id = Shop.where("shop_name=?",input[:cafe]).take.id
+    input_order.shop_id = input[:cafe].to_i
     input_order.order_list = input[:order]
     input_order.order_time = Time.zone.parse(input[:pickup_time])
     input_order.check_active = true
@@ -31,7 +31,7 @@ class MainController < ApplicationController
 		"sellerOrderReferenceKey" => Date.current.strftime("%Y%m%d").to_s + order_numb,
 		"totalPaymentAmt" => eval(input_order.order_list)[0][:price],
 		#"totalPaymentAmt" => "1",
-		"serviceUrl" => "http://bringit.kr/main/asdf",
+		"serviceUrl" => "http://bringit.kr/main/cafe_status_check",
 		#"serviceUrlParams" => params.to_json,
 		"returnUrl" => "http://bringit.kr/main/order_success",
 		"returnUrlParam" => params.to_json,
@@ -59,6 +59,22 @@ class MainController < ApplicationController
 	response = RestClient.post 'https://api-bill.payco.com/outseller/order/reserve', input_json.to_json, :content_type => :json, :accept => :json
 	
 	logger.info response
+
+	response_code = eval(response.body)[:code]
+
+	if response_code == 1001 # parameter not correct
+		input_json["sellerOrderReferenceKey"] << "_"
+		input_json["orderProducts"][0]["sellerOrderProductReferenceKey"] << "_"
+		response = RestClient.post 'https://api-bill.payco.com/outseller/order/reserve', input_json.to_json, :content_type => :json, :accept => :json
+		logger.info response
+	end
+	#elsif response_code == 1012 # payment timeover
+	#elsif response_code == 1402 # card limit
+	#elsif response_code == 1450 || response_code == 1451 || response_code == 1452 || response_code == 1453 # temporal error
+	#elsif response_code == 9000 # server down
+		
+	#else # ???
+	#end
 	render json: response    
 
 	#redirect_to controller: "main", action: "order_success", input: input
@@ -183,9 +199,9 @@ class MainController < ApplicationController
         
         user_come.save
         logger.info receipt_page
-        render json: receipt_page #영수증 정보를 넘겨주는것
+        render json: [receipt_page, Shop.find(customer_shopid)] #영수증 정보를 넘겨주는것
       
-      else #오더가 있는데 액티브가 없어
+      else
         user_come.save      
         render json: "" 
       end
@@ -206,15 +222,25 @@ class MainController < ApplicationController
     else  #첫 오더가 있으면
 		@basic_order = JSON.parse(@default_order.to_json)
 		@basic_order["order_time"] = DateTime.parse(@basic_order["order_time"]).strftime("%Y/%m/%d %H:%M")   
-		@basic_order["cafe"] = Shop.find(@basic_order["shop_id"]).shop_name
-        
+		@basic_order["cafe"] = @basic_order["shop_id"].to_i
+        order_size = user_come.orders.where("shop_id=?",@basic_order["cafe"]).size 
+		if order_size == 0
+			@basic_order["coupon"] = -1
+		else
+			@basic_order["coupon"] = order_size%Shop.find(@basic_order["cafe"]).coupon
+		end
         logger.info @basic_order
-        render json: @basic_order
+        render json: [@basic_order,Shop.find(@basic_order["shop_id"].to_i)]
     end
   end
   
-  def cafelist #카페 선택 화면
-    @shop = Shop.all
+  def cafelist #카페 선택 화�
+	#shop 레코드에 지역도 추가.
+	#지역마다 가져오는 것으로 수정.
+	user_sim = params[:user_sim]
+	shop_location = params[:shop_location]
+	
+	@shop = Shop.where("shop_location=?",shop_location).order(location_distant: :desc)
     
     render json: @shop
     #카페 DB 필요함 
@@ -237,6 +263,8 @@ class MainController < ApplicationController
     @menulist = selected_cafe.menus.where("hot_cold=?",hot_cold)
     # render json: menulist
   end
+
+
   def modify_daily
 	input_json = eval(params[:order])[0]
 	sim_serial = params[:sim_serial]
@@ -276,7 +304,7 @@ class MainController < ApplicationController
     
     input_order = Order.new  
     input_order.customer_id = Customer.where("customer_simid=?",input[:user_sim]).take.id
-    input_order.shop_id = Shop.where("shop_name=?",input[:cafe]).take.id
+    input_order.shop_id =input[:cafe].to_i
     input_order.order_list = input[:order]
     input_order.order_time = Time.zone.parse(input[:pickup_time])
     input_order.check_active = true
@@ -352,12 +380,41 @@ class MainController < ApplicationController
 	#여기서 order_cast 대신에 provider id 등으로 바꿔서 채널     
     render_json = JSON.parse(input_order.to_json)
     render_json["order_time"] = DateTime.parse(render_json["order_time"]).strftime("%Y/%m/%d %H:%M")   
-    render_json["cafe"] = Shop.find(render_json["shop_id"]).shop_name
+    render_json["cafe"] = render_json["shop_id"]
     logger.info render_json
-    logger.info "주문받은거"
-    #render json: render_json
 	@render_json = render_json.as_json
-	render layout: false
+	if params[:payment_method]=="kakaoPay"
+		logger.info params[:payment_type]
+		render json: render_json
+	else
+		render layout: false
+	end
   end
   
+  def get_push_alarm
+	sim_serial = params[:user_sim]
+	selected_user = Customer.where("customer_simid=?", sim_serial).take
+	push_ag = selected_user.push_alarm
+
+	render json: push_ag
+  end
+
+  def set_push_alarm	
+	sim_serial = params[:user_sim]
+	push_ag = params[:push_agreed]
+
+	if push_ag=="true"
+		@push_agreed = true
+	else
+		@push_agreed = false
+	end
+
+	selected_user = Customer.where("customer_simid=?",sim_serial).take
+	
+	# change attribute accordingly
+	selected_user.push_alarm = @push_agreed
+	selected_user.save
+
+	render json: selected_user
+  end 
 end
