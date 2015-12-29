@@ -220,18 +220,19 @@ class ProviderController < ApplicationController
 	option = params[:option]
 	menus = params[:menus]
 	
-	menus.split('\r\n').each do |menu_whole|
-		menu_seperate = menu_whole.split('\t')
+	menus.split("\r\n").each do |menu_whole|
+		menu_seperate = menu_whole.split("\t")
 
 		new_menu = Menu.new
 		new_menu.shop_id = shop_id
 
 		new_menu.menu_option = option
-		if menu_seperate!=""
+		if menu_seperate[0]!=nil
 			new_menu.menu_title = menu_seperate[0]
 			new_menu.menu_price = menu_seperate[1].to_i
 			new_menu.hot_cold = menu_seperate[2].to_i
 			new_menu.caffeine = menu_seperate[3].to_i
+			new_menu.menu_order = menu_seperate[4].to_i
 			new_menu.save
 		end
 		logger.info new_menu

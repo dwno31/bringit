@@ -214,7 +214,7 @@ function order_complete(){
 				<td><%= record.order_time.to_date %></td>
 				<td><%= record.daily_number%></td>
 					<% menu_info = eval(record.order_list)[0] %>
-				<td><%= menu_info[:name]%>//<%= menu_info[:option_list]%></td>
+				<td><%= menu_info[:name]%>//<%= menu_info[:option_list]%>//<%=menu_info[:long_option]%></td>
 				<td><%= record.order_time.strftime("%p %I:%M")%></td>
 				<td><%= record.inline_time.strftime("%p %I:%M")%></td>
 				<td><%= record.complete_time.strftime("%p %I:%M")%></td>

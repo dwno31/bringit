@@ -11,7 +11,7 @@
         <span><%= menu.menu_title%></span>
       </div>
       <div class=menuprice>
-        <span><%= menu.menu_price%>원</span>
+        <span id=menu_price><%= menu.menu_price%>원</span>
       </div>
     </div>
   </div>
@@ -102,7 +102,8 @@
   var menu_title = $("#"+menu_id+"menu>div>div.menutitle_kr>span").text();
   var shot_price = 300;
   var size_price = size_match[menu_size]*300
-  var menu_price = parseInt($("#"+menu_id+"menu>div>div.menuprice>span").text())+ shot_match[menu_shot] * shot_price + size_price
+	if(isNaN(size_price)){size_price = 0;};
+  var menu_price = parseInt($("#menu_price").text())+ shot_match[menu_shot] * shot_price + size_price
   var to_android = {'menu_title': menu_title,'menu_price':menu_price, 'count':"1", 'menu_option':"샷 추가:"+menu_shot+",Size:"+menu_size, 'long_option':menu_long_option}; 
   console.log(to_android);
   <% if @mod=="true" %>

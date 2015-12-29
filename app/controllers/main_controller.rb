@@ -261,7 +261,7 @@ logger.info @shop
     #DB에서 해당 카페의 정보를 찾는다
     selected_cafe = Shop.find(cafe_id.to_i)
     logger.info selected_cafe
-    @menulist = selected_cafe.menus.where("hot_cold=?",hot_cold)
+    @menulist = selected_cafe.menus.where("hot_cold=?",hot_cold).order(menu_order: :asc)
     # render json: menulist
   end
 

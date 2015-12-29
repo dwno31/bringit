@@ -8,7 +8,7 @@ def self.check_coupon(user_sim, shop_id)
     if bought_cups == 0
          return -1
     else
-         return (coupon_size - bought_cups % coupon_size)
+         return (bought_cups % coupon_size)
     end
  end
 
