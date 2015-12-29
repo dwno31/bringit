@@ -63,8 +63,6 @@ function bring_timer(name){
 
 
 
-
-
 function select_order(order_id){
     $(order_id).toggleClass("order_active");
     window.navigator.vibrate(100);
@@ -228,6 +226,7 @@ function order_complete(){
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<audio src="/bringring.wav" autostart="false" width="0" height="0" id="sound1"></audio>
 <script>
 function second_to_minute(second){
   var total_second = Math.floor(second);
@@ -269,6 +268,11 @@ function receipt_order(){
     
   };
 };
+function PlaySound(soundObj) {
+  var sound = document.getElementById("sound1");
+  sound.Play();
+}
+
 
     var pusher = new Pusher('2ba19614def775bcd1a8', {
       encrypted: true
@@ -289,7 +293,7 @@ function receipt_order(){
 //   $("#order_"+message.order_number+".order_info").append("");
 // });
   receipt_order();
-
+	PlaySound("sound1");
 
 
     });
@@ -328,3 +332,4 @@ $(document).ready(function() {
   // handle message
 //});
 </script>
+
