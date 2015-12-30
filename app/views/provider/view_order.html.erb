@@ -181,7 +181,6 @@ function order_complete(){
           </div>
           <% end %>
         
-      
       </div>
     </div>
     
@@ -207,17 +206,27 @@ function order_complete(){
 				<td>인라인 시간</td>
 				<td>완료 시간</td>
 			</tr>
+			<% price_sum = 0 %>
 			<% @day_order_history.each do |record|%>
 			<tr>
 				<td><%= record.order_time.to_date %></td>
 				<td><%= record.daily_number%></td>
 					<% menu_info = eval(record.order_list)[0] %>
+					<% price_sum = price_sum + menu_info[:price]%>
 				<td><%= menu_info[:name]%>//<%= menu_info[:option_list]%>//<%=menu_info[:long_option]%></td>
 				<td><%= record.order_time.strftime("%p %I:%M")%></td>
 				<td><%= record.inline_time.strftime("%p %I:%M")%></td>
 				<td><%= record.complete_time.strftime("%p %I:%M")%></td>
 			</tr>		
 			<% end %>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td><%= @day_order_history.size%>잔</td>
+				<td>총 <%= price_sum%> 원</td>
+			</tr>
 		</table>
       </div>
       <div class="modal-footer">
@@ -268,9 +277,9 @@ function receipt_order(){
     
   };
 };
-function PlaySound(soundObj) {
+function PlaySound() {
   var sound = document.getElementById("sound1");
-  sound.Play();
+  sound.play();
 }
 
 
@@ -293,7 +302,7 @@ function PlaySound(soundObj) {
 //   $("#order_"+message.order_number+".order_info").append("");
 // });
   receipt_order();
-	PlaySound("sound1");
+	PlaySound();
 
 
     });

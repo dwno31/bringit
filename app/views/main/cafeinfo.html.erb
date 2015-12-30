@@ -11,7 +11,7 @@
         <span><%= menu.menu_title%></span>
       </div>
       <div class=menuprice>
-        <span id=menu_price><%= menu.menu_price%>원</span>
+        <span id=<%=menu.id%>menu_price><%= menu.menu_price%>원</span>
       </div>
     </div>
   </div>
@@ -97,15 +97,19 @@
     var menu_size = $("#"+menu_id+"size").text();
     var menu_shot = $("#"+menu_id+"shot").text();
     var menu_long_option = $("#"+menu_id+"long_option").val();
-   
 
   var menu_title = $("#"+menu_id+"menu>div>div.menutitle_kr>span").text();
   var shot_price = 300;
   var size_price = size_match[menu_size]*300
-	if(isNaN(size_price)){size_price = 0;};
-  var menu_price = parseInt($("#menu_price").text())+ shot_match[menu_shot] * shot_price + size_price
+	if(isNaN(size_price)){
+  var menu_price = parseInt($("#"+menu_id+"menu_price").text())+ shot_match[menu_shot] * shot_price}
+	else{
+  var menu_price = parseInt($("#"+menu_id+"menu_price").text())+ shot_match[menu_shot] * shot_price + size_price}
+	
   var to_android = {'menu_title': menu_title,'menu_price':menu_price, 'count':"1", 'menu_option':"샷 추가:"+menu_shot+",Size:"+menu_size, 'long_option':menu_long_option}; 
-  console.log(to_android);
+  console.log(size_price);
+	if(isNaN(size_price)){to_android.menu_option = ("샷 추가:"+menu_shot);};
+ console.log(to_android);
   <% if @mod=="true" %>
 	/*to_android.sim_serial = '<%= @sim_serial%>';
 	to_android.shop_id = '<%= @shop_id%>';

@@ -214,7 +214,7 @@ class MainController < ApplicationController
     user_sid = params[:user_sim]
     user_come = Customer.where("customer_simid=?",user_sid).take
     
-    @default_order = user_come.orders.first
+    @default_order = eval(user_come.default_order)
   
     if @default_order.nil? #오더가 없다
         
@@ -280,11 +280,11 @@ logger.info @shop
 			  "long_option" => input_json[:long_option]
 			}] 							
 	logger.info selected_user
-	daily_order = selected_user.orders.first	#해당 유저의 daily_order를 가져온다
-	daily_order.shop_id = shop_id
-	daily_order.order_list = input.to_s
-	daily_order.save
-		
+	daily_order = eval(selected_user.default_order)	#해당 유저의 daily_order를 가져온다
+	daily_order[:shop_id] = shop_id
+	daily_order[:order_list] = input.to_s
+	selected_user.default_order = daily_order
+	selected_user.save	
 	render json: ""
   end 
   def order_success #주문을 받아서 결제를 확인하고,  카페측으로 보내줍니다
@@ -301,10 +301,10 @@ logger.info @shop
     # 
     # 
     # }
-    
+    selected_user = Customer.where("customer_simid=?",input[:user_sim]).take
     
     input_order = Order.new  
-    input_order.customer_id = Customer.where("customer_simid=?",input[:user_sim]).take.id
+    input_order.customer_id = selected_user.id
     input_order.shop_id =input[:cafe].to_i
     input_order.order_list = input[:order]
     input_order.order_time = Time.zone.parse(input[:pickup_time])
@@ -314,7 +314,11 @@ logger.info @shop
     order_numb = input_order.daily_number
     input_order.payment_method = input[:payment_method]
 	shop_code = input_order.shop_id.to_s 
-    input_order.save
+    if selected_user.default_order.nil?
+		selected_user.default_order = input_order.attributes.delete_if{|k,v|v.nil?}.to_json
+		selected_user.save
+	end
+	input_order.save
     
     #주문이 success하게되면, 해당 주문을 카페쪽 웹앱 클라이언트로 push해준다
     
