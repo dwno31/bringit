@@ -71,20 +71,11 @@
  width:29%;
  float:left;
 }
-.zigzag_borders {
-    background: linear-gradient(#F93 20%, transparent 20%),
-    linear-gradient(-45deg, white 35%, transparent 35%) 0 50%,
-    white linear-gradient(45deg, white 35%, #F93 35%) 0 50%;
-    background-repeat: repeat-x;
-    background-size: 1px 100%, 20px 20px, 20px 20px;
-    height:20px;
-}
+.receipt_zigzag{
+  height:14px;
+  width:100%;
+  background-image:url('/img/receipt_crop.png');
 
-.order_number{
- text-align:center;
- font-size:2em;
- font-weight:800;
- border-bottom:1px solid rgb(224,224,224); 
 }
 
 .order_info{

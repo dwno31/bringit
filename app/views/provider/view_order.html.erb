@@ -178,6 +178,7 @@ function order_complete(){
             <div class=info_footer>
                 약속시간<span name=time_after id="order_<%= order[:order_number]%>_timer"><%= (order[:pickup_time]/60).ceil %>:<%= (order[:pickup_time]%60).ceil %></span>후
             </div>
+			<div class=receipt_zigzag></div>
           </div>
           <% end %>
         
