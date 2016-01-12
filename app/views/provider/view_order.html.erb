@@ -80,7 +80,7 @@ function order_intoline(){
     method: "POST",
     data: {"shop_id":"<%=@shop_id%>",intoline_list :intoline_list},
     success:function(){
-              $("#order_beforeline>.order_receipt.order_active").appendTo("#order_afterline").toggleClass("order_active").toggleClass("zigzag");
+              $("#order_beforeline>.order_receipt.order_active").appendTo("#order_afterline").toggleClass("order_active zigzag");
               window.navigator.vibrate(100);
               },
   });
@@ -154,7 +154,7 @@ function order_complete(){
       
           <% @inline_order.each do |order| %>
           <% logger.info order %>
-          <div onclick="select_order('#order_<%=order[:order_number]%>')" id=order_<%=order[:order_number]%> class="order_receipt">
+          <div onclick="select_order('#order_<%=order[:order_number]%>')" id=order_<%=order[:order_number]%> class="order_receipt zigzag">
             <div class="order_number">
               <span><%=order[:order_number]%></span>
             </div>
@@ -178,7 +178,6 @@ function order_complete(){
             <div class=info_footer>
                 약속시간<span name=time_after id="order_<%= order[:order_number]%>_timer"><%= (order[:pickup_time]/60).ceil %>:<%= (order[:pickup_time]%60).ceil %></span>후
             </div>
-			<div class=receipt_zigzag></div>
           </div>
           <% end %>
         
@@ -320,7 +319,7 @@ $(document).ready(function() {
             //leaving the first slide of the 2nd Section to the right
             if(index == 1 && slideIndex == 0 && direction == 'right'){
 				$(".order_button")[0].innerHTML = "음료나왔습니다";
-				$(".order_button")[0].toggleClass("go_push");    
+				$("#order_button").toggleClass("go_push");    
 				$("#order_button").attr("onclick","order_complete()");
 				console.log("1");
             }
@@ -328,7 +327,7 @@ $(document).ready(function() {
             //leaving the 3rd slide of the 2nd Section to the left
             if(index == 1 && slideIndex == 1 && direction == 'left'){
                 $(".order_button")[0].innerHTML = "빌지넘기기";
-				$(".order_button")[0].toggleClass("go_push");
+				$("#order_button").toggleClass("go_push");
 				$("#order_button").attr("onclick","order_intoline()");
 				console.log("2");
             }

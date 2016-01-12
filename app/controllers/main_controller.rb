@@ -509,9 +509,13 @@ logger.info @shop
   def order_history
 	user_sim = params[:user_sim]
 
-	render_json = Customer.find_by(:customer_simid => user_sim).orders.as_json
+	customer_order_history = Customer.find_by(:customer_simid => user_sim).orders.as_json
 		
-	render_json.each{|x| x["order_time"] = x["order_time"].strftime("%Y/%m/%d %H:%M").to_s}
+	render_json = []
+	
+	customer_order_history.each{|x| x["order_time"] = x["order_time"].strftime("%Y/%m/%d %H:%M").to_s}
+
+	customer_order_history.each{|x| render_json << [x, Shop.find(x["shop_id"].to_i)]}
 
 	logger.info render_json
 
