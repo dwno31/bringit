@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151230074457) do
+ActiveRecord::Schema.define(version: 20160107121011) do
 
   create_table "customers", force: :cascade do |t|
     t.string   "customer_simid", limit: 255
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 20151230074457) do
     t.string   "gcmid",          limit: 255
     t.boolean  "push_alarm"
     t.text     "default_order",  limit: 65535
+    t.text     "my_coupon",      limit: 65535
   end
 
   create_table "menus", force: :cascade do |t|
@@ -46,6 +47,7 @@ ActiveRecord::Schema.define(version: 20151230074457) do
     t.string   "order_refid",    limit: 255
     t.datetime "inline_time"
     t.datetime "complete_time"
+    t.string   "payment_status", limit: 255
   end
 
   add_index "orders", ["order_refid"], name: "index_orders_on_order_refid", using: :btree

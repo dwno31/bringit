@@ -6,7 +6,7 @@ set -e
 TIMEOUT=${TIMEOUT-60}
 APP_ROOT=~/bringit
 PID=$APP_ROOT/tmp/pids/server.pid
-CMD="cd $APP_ROOT;rvmsudo rails s -e production -d -p 80 -b 0.0.0.0 --pid $PID"
+CMD="sudo service apache2 restart"
 AS_USER=ubuntu
 set -u
 

@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'passenger'
+gem 'rack-reverse-proxy', require: 'rack/reverse_proxy'
 gem 'pusher'
 gem 'rest-client'
 gem 'spreadsheet'

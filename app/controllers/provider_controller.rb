@@ -1,7 +1,7 @@
 class ProviderController < ApplicationController
   require 'gcm'
   
-  def login
+ def login
     
   end
   
@@ -23,6 +23,7 @@ class ProviderController < ApplicationController
   
   def view_order
     shop_id = session[:shop_id].to_i
+	@shop_id = shop_id
     logger.info shop_id
     if shop_id == 0
       redirect_to '/provider/login'
@@ -150,6 +151,7 @@ class ProviderController < ApplicationController
   
   def inline_list
     goinline = params[:intoline_list]
+	selected_shop =Shop.find(params[:shop_id].to_i)
     number_list = []
     #파라미터에 있는 order값 + 날짜로 order테이블에서 레코드를 찾는다
     goinline.each do |whole_number|
@@ -157,7 +159,7 @@ class ProviderController < ApplicationController
     end
     
     number_list.each do |order_number|
-      order_record = Order.where("daily_number=? and order_time>=?",order_number,Time.zone.now.beginning_of_day).take
+      order_record = selected_shop.orders.where("daily_number=? and order_time>=?",order_number,Time.zone.now.beginning_of_day).take
     #해당 레코드의 status를 inline으로 바꾼다
       order_record.is_inline = true
 	  order_record.inline_time = Time.zone.now
@@ -169,6 +171,7 @@ class ProviderController < ApplicationController
   end
   
   def complete_list
+	selected_shop = Shop.find(params[:shop_id].to_i)
     goinline = params[:complete_list]
     number_list = []
     gcm = GCM.new("AIzaSyAXelTBPvT_N9xyAtj5OqmnZuY_mhKeLIo")
@@ -178,7 +181,7 @@ class ProviderController < ApplicationController
     end
     
     number_list.each do |order_number|
-      order_record = Order.where("daily_number=? and order_time>=?",order_number,Time.zone.now.beginning_of_day).take
+      order_record = selected_shop.orders.where("daily_number=? and order_time>=?",order_number,Time.zone.now.beginning_of_day).take
     #해당 레코드의 status를 inline으로 바꾼다
       order_record.is_inline = nil
     #해당 레코드의 완료 시간을 기록한다
@@ -189,6 +192,7 @@ class ProviderController < ApplicationController
     options = {data: {title: "브링잇", message: "주문하신 음료가 나왔어요!"}}
     response = gcm.send_notification(registration_ids, options)
     puts response
+	logger.info response
     order_record.save
     end
     

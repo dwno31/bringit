@@ -1,7 +1,13 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
+config.middleware.use Rack::ReverseProxy do
+  # Redirect all PHP URLs
+  reverse_proxy %r(\.php), "http://localhost:3000/"
 
-  # Code is not reloaded between requests.
+  # Redirect all images and stylesheets
+  #reverse_proxy '/images/', "http://localhost:8000/"
+  #reverse_proxy '/stylesheets/', "http://localhost:8000/"
+end
   config.cache_classes = true
 
   # Eager load code on boot. This eager loads most of Rails and

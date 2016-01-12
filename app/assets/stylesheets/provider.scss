@@ -71,6 +71,14 @@
  width:29%;
  float:left;
 }
+.zigzag_borders {
+    background: linear-gradient(#F93 20%, transparent 20%),
+    linear-gradient(-45deg, white 35%, transparent 35%) 0 50%,
+    white linear-gradient(45deg, white 35%, #F93 35%) 0 50%;
+    background-repeat: repeat-x;
+    background-size: 1px 100%, 20px 20px, 20px 20px;
+    height:20px;
+}
 
 .order_number{
  text-align:center;

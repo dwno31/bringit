@@ -78,7 +78,7 @@ function order_intoline(){
   $.ajax({
     url:"/provider/inline_list",
     method: "POST",
-    data: {intoline_list :intoline_list},
+    data: {"shop_id":"<%=@shop_id%>",intoline_list :intoline_list},
     success:function(){
               $("#order_beforeline>.order_receipt.order_active").appendTo("#order_afterline").toggleClass("order_active");
               window.navigator.vibrate(100);
@@ -101,7 +101,7 @@ function order_complete(){
   $.ajax({
     url:"/provider/complete_list",
     method: "POST",
-    data: {complete_list :complete_list},
+    data: {"shop_id":"<%=@shop_id%>",complete_list :complete_list},
     success:$("#order_afterline>.order_receipt.order_active").remove(),
     
   });
@@ -215,8 +215,8 @@ function order_complete(){
 					<% price_sum = price_sum + menu_info[:price]%>
 				<td><%= menu_info[:name]%>//<%= menu_info[:option_list]%>//<%=menu_info[:long_option]%></td>
 				<td><%= record.order_time.strftime("%p %I:%M")%></td>
-				<td><%= record.inline_time.strftime("%p %I:%M")%></td>
-				<td><%= record.complete_time.strftime("%p %I:%M")%></td>
+				<td></td>
+				<td></td>
 			</tr>		
 			<% end %>
 			<tr>
@@ -312,6 +312,7 @@ $(document).ready(function() {
     $('#fullpage').fullpage({
         controlArrows: false,
         normalScrollElements: '.slide_whole',
+		scrollOverflow: true,
 		onSlideLeave: function( anchorLink, index, slideIndex, direction, nextSlideIndex){
             var leavingSlide = $(this);
 

@@ -9,6 +9,39 @@ class MainController < ApplicationController
 
   end
 
+  def bringit_kakao
+ 	input = params	
+	
+    input_order = Order.new  
+    input_order.customer_id = Customer.where("customer_simid=?",input[:user_sim]).take.id
+    input_order.shop_id = input[:cafe].to_i
+    input_order.order_list = input[:order]
+    input_order.order_time = Time.zone.parse(input[:pickup_time])
+    input_order.check_active = true
+    input_order.daily_number = "B"+(Order.where("order_time >=? and shop_id=?",Time.zone.now.beginning_of_day, input_order.shop_id).size+1).to_s
+    input_order.is_inline = false
+    order_numb = input_order.daily_number
+    input_order.payment_method = input[:payment_method]
+	shop_code = input_order.shop_id.to_s 
+
+	input_json ={
+		"PayMethod" => "KAKAOPAY",
+		"GoodsCnt" => eval(input_order.order_list)[0][:count],
+		"GoodsName" => eval(input_order.order_list)[0][:name],
+		"Amt" => eval(input_order.order_list)[0][:price],
+		"MID" => "",
+		"BuyerName" => "브링잇",
+		"EdiDate" => "",
+		"EncryptData" => "",
+		"merchantTxnNum" => "",
+		"SPU" => "",
+		"SPU_SIGN_TOKEN" => "",
+		"MPAY_PUB" => "",
+		"AuthFlg" => ""
+	}
+		render json: ""
+  end
+
   def payco
 
 	input = params
@@ -176,36 +209,38 @@ class MainController < ApplicationController
     @default_order = user_come.orders.first
     active_order = user_come.orders.where("check_active=? and order_time>=?",true, Date.today).take
     logger.info active_order
-      
+    user_come.save
     if @default_order.nil? #오더가 없다
-        user_come.save
         render text: ""
     else  #첫 오더가 있으면
       if !active_order.nil?  #액티브 된게 있어
-        receipt_page = active_order.to_json
-        
-        customer_shopid = active_order.shop_id
-        receipt_page = JSON.parse(receipt_page) 
-        receipt_page["cafe"] = Shop.find(customer_shopid).shop_name
-        receipt_page["order_time"] = DateTime.parse(receipt_page["order_time"]).strftime("%Y/%m/%d %H:%M")
+		if (active_order.order_time + 600 - DateTime.now)<0
+			active_order.check_active = false
+			logger.info "time over"
+			active_order.save
+			render json: ""
+		else
+			receipt_page = active_order.to_json
+			customer_shopid = active_order.shop_id
+			receipt_page = JSON.parse(receipt_page) 
+			receipt_page["cafe"] = Shop.find(customer_shopid).shop_name
+			receipt_page["order_time"] = DateTime.parse(receipt_page["order_time"]).strftime("%Y/%m/%d %H:%M")
        
-        if active_order.is_inline.nil?
-          active_order.check_active = false
-		  active_order.save
-		elsif (active_order.order_time + 600 - DateTime.now)>0
-		  active_order.check_active = false
-          active_order.save
-        end
+			if active_order.is_inline.nil?
+				active_order.check_active = false
+				active_order.save
+			end
         
-        user_come.save
-        logger.info receipt_page
-        render json: [receipt_page, Shop.find(customer_shopid)] #영수증 정보를 넘겨주는것
-      
+        
+			logger.info receipt_page
+			render json: [receipt_page, Shop.find(customer_shopid)] #영수증 정보를 넘겨주는것
+		end 
       else
         user_come.save      
         render json: "" 
       end
     end
+	
     
   end
   
@@ -215,22 +250,20 @@ class MainController < ApplicationController
     user_come = Customer.where("customer_simid=?",user_sid).take
     
     @default_order = eval(user_come.default_order)
-  
-    if @default_order.nil? #오더가 없다
+ 
+    if @default_order.nil?
         
         render text: ""
-    else  #첫 오더가 있으면
+    else  
 		@basic_order = JSON.parse(@default_order.to_json)
 		@basic_order["order_time"] = DateTime.parse(@basic_order["order_time"]).strftime("%Y/%m/%d %H:%M")   
 		@basic_order["cafe"] = @basic_order["shop_id"].to_i
-        order_size = user_come.orders.where("shop_id=?",@basic_order["cafe"]).size 
-		if order_size == 0
-			@basic_order["coupon"] = -1
-		else
-			@basic_order["coupon"] = order_size%Shop.find(@basic_order["cafe"]).coupon
-		end
-        logger.info @basic_order
-        render json: [@basic_order,Shop.find(@basic_order["shop_id"].to_i)]
+		@basic_order["coupon"] = MainHelper.check_coupon(user_sid,@basic_order["cafe"])
+		#coupons = eval(user_come.my_coupon).select{|i| (eval(user_come.my_coupon)[i][:shop_id].to_i == @basic_order["shop_id"].to_i} && (eval(user_come.my_coupon)[i][:status] == true)).size
+		coupons = eval(user_come.my_coupon).select{|coupon| coupon[:shop_id].to_i == @basic_order["cafe"]}.select{|s_coupon| s_coupon[:status]==true}.size
+       	rendering_json = [@basic_order, Shop.find(@basic_order["shop_id"].to_i), coupons]
+        logger.info rendering_json
+	    render json: rendering_json 
     end
   end
     
@@ -241,22 +274,26 @@ class MainController < ApplicationController
 	shop_location = params[:shop_location]
 	
 	@shop = Shop.where("shop_location=?",shop_location).order(location_distant: :desc).as_json
-	@shop.each{|shop|shop["remaining_cups"] = MainHelper.check_coupon(params[:user_sim],shop["id"])} 
+	
+	@shop.each do |shop|
+		shop["remaining_cups"] = MainHelper.check_coupon(params[:user_sim],shop["id"])
+		shop["available_coupon"] = eval(selected_user.my_coupon).select{|coupon| coupon[:shop_id].to_i == shop["id"]}.select{|coupon| coupon[:status]==true}.size
+	end 
 logger.info @shop
-    render json: @shop
+	
+	render json: @shop
     #카페 DB 필요함 
     #이름, 위치, 사진
 
   end
-
   
   def cafeinfo #카페 메뉴 화면
     cafe_id = params[:cafe_id] #클라이언트에서 선택한 카페의 id값을 받아온다
     hot_cold = params[:hot_cold].to_i
     @user_sim = params[:user_sim]
 	@mod = params[:mod]
-   	@sim_serial = params[:sim_serial]
-	@shop_id = params[:shop_id].to_i
+   	@sim_serial = params[:user_sim]
+	@shop_id = params[:cafe_id].to_i
 	
     #DB에서 해당 카페의 정보를 찾는다
     selected_cafe = Shop.find(cafe_id.to_i)
@@ -264,7 +301,6 @@ logger.info @shop
     @menulist = selected_cafe.menus.where("hot_cold=?",hot_cold).order(menu_order: :asc)
     # render json: menulist
   end
-
 
   def modify_daily
 	input_json = eval(params[:order])[0]
@@ -287,6 +323,17 @@ logger.info @shop
 	selected_user.save	
 	render json: ""
   end 
+
+  def my_coupon_check
+
+	input = params
+
+	customer = Customer.find_by(:customer_simid => input[:sim_serial])
+	
+	render json: customer.my_coupon
+
+  end
+
   def order_success #주문을 받아서 결제를 확인하고,  카페측으로 보내줍니다
       #해당 주문의 내용을 카페측으로 보내고, 주문을 active로 만듭니다
 	input = params    
@@ -302,10 +349,10 @@ logger.info @shop
     # 
     # }
     selected_user = Customer.where("customer_simid=?",input[:user_sim]).take
-    
+    selected_shop = Shop.find(input[:cafe].to_i)
     input_order = Order.new  
     input_order.customer_id = selected_user.id
-    input_order.shop_id =input[:cafe].to_i
+    input_order.shop_id =selected_shop.id
     input_order.order_list = input[:order]
     input_order.order_time = Time.zone.parse(input[:pickup_time])
     input_order.check_active = true
@@ -313,6 +360,24 @@ logger.info @shop
     input_order.is_inline = false
     order_numb = input_order.daily_number
     input_order.payment_method = input[:payment_method]
+	if input_order.payment_method!= "coupon"
+		input_order.payment_status = "stamp"
+	else
+		input_order.payment_status = "free"
+
+		# change status of used coupon
+		user_coupons = eval(selected_user.my_coupon)		
+		used_coupon = user_coupons.select{|coupon|coupon[:shop_id]==selected_shop.id}.detect{|coupon|coupon[:status]==true}
+		used_index = user_coupons.index(used_coupon)
+		logger.info used_index
+		logger.info "used_index"
+		used_coupon[:status] = false
+		logger.info user_coupons
+		user_coupons[used_index]=used_coupon
+		logger.info user_coupons
+		selected_user.my_coupon = user_coupons.to_json
+		selected_user.save
+	end
 	shop_code = input_order.shop_id.to_s 
     if selected_user.default_order.nil?
 		selected_user.default_order = input_order.attributes.delete_if{|k,v|v.nil?}.to_json
@@ -323,7 +388,7 @@ logger.info @shop
     #주문이 success하게되면, 해당 주문을 카페쪽 웹앱 클라이언트로 push해준다
     
     
-    order_whole = Order.where("order_time>=? and daily_number=?",Time.zone.now.beginning_of_day,order_numb).take
+    order_whole = selected_user.orders.last
     logger.info order_whole.to_json
     orderlist = eval(order_whole.order_list)
     order_convert_list = [] #convert된 order들을 담는 배열
@@ -387,12 +452,27 @@ logger.info @shop
     render_json["order_time"] = DateTime.parse(render_json["order_time"]).strftime("%Y/%m/%d %H:%M")   
     render_json["cafe"] = render_json["shop_id"]
     logger.info render_json
+	#check order records and stamp for free coupon
+	stamp_check =Order.where("customer_id=? and shop_id=? and payment_status=?",selected_user.id,input[:cafe].to_i,"stamp")
+	if stamp_check.size == selected_shop.coupon-1
+		
+		my_coupon = eval(selected_user.my_coupon)
+		new_coupon = {:shop_id=>input[:cafe].to_i, :shop_name=>selected_shop.shop_name, :shop_location=>selected_shop.shop_location, :coupon_type=>100, :issued_time => Time.zone.now.strftime("%Y/%m/%d %H:%M").to_s,:status=>true}
+		my_coupon << new_coupon
+		selected_user.my_coupon = my_coupon.to_json
+		selected_user.save
+		stamp_check.each{|x|x.update(payment_status:"issued")}
+	end
 	@render_json = render_json.as_json
-	if params[:payment_method]=="kakaoPay"
+	#if params[:payment_method]=="kakaoPay"
+		#logger.info params[:payment_type]
+		#render json: render_json
+	#else
+	if params[:payment_method]=="PAYCO"	
+		render layout: false
+	else
 		logger.info params[:payment_type]
 		render json: render_json
-	else
-		render layout: false
 	end
   end
   
@@ -421,5 +501,6 @@ logger.info @shop
 	selected_user.save
 
 	render json: selected_user
-  end 
+  end	
+	
 end
