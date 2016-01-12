@@ -71,11 +71,9 @@
  width:29%;
  float:left;
 }
-.receipt_zigzag{
-  height:14px;
-  width:100%;
-  background-image:url('/img/receipt_crop.png');
-
+.zigzag{
+ background-image:url('/img/receipt_crop.png');
+ background-size:100% 100%;
 }
 
 .order_info{
@@ -158,6 +156,10 @@
     user-select: none; 
 }
 
+.go_push{
+	background:#F04E01!important;
+}
+
 .order_button:hover {
   background: #d4aa00;
   text-decoration: none;
@@ -192,8 +194,7 @@
 
 
 .order_active{
- background-color:rgb(240, 196, 25);
- 
+ background-color:rgb(240, 196, 25); 
 }
 
 //---로그인 관련

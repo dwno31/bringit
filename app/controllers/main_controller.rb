@@ -173,7 +173,7 @@ class MainController < ApplicationController
   
   end
  
-  def cafe_status_check 
+  def cafe_status_check # ¿¿ ¿¿ ¿¿
 
 	logger.info params
 	render json: "OK"
@@ -209,6 +209,9 @@ class MainController < ApplicationController
     @default_order = user_come.orders.first
     active_order = user_come.orders.where("check_active=? and order_time>=?",true, Date.today).take
     logger.info active_order
+	if user_come.my_coupon.nil?
+		user_come.my_coupon = "[]"	
+	end
     user_come.save
     if @default_order.nil? #ì˜¤ë”ê°€ ì—†ë‹¤
         render text: ""
@@ -502,5 +505,16 @@ logger.info @shop
 
 	render json: selected_user
   end	
-	
+  
+  def order_history
+	user_sim = params[:user_sim]
+
+	render_json = Customer.find_by(:customer_simid => user_sim).orders.as_json
+		
+	render_json.each{|x| x["order_time"] = x["order_time"].strftime("%Y/%m/%d %H:%M").to_s}
+
+	logger.info render_json
+
+	render json: render_json
+  end	
 end
