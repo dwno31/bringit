@@ -73,9 +73,12 @@
 }
 .zigzag{
  background-image:url('/img/receipt_crop.png');
- background-size:100% 100%;
+ background-size:102% 102%;
 }
-
+.zigzag_active{
+ background-image:url('/img/receipt_crop_red.png');
+ background-size:102% 102%;
+}
 .order_info{
  margin:4px 2px 2px 4px;
  font-size:1em;
