@@ -176,7 +176,7 @@ class MainController < ApplicationController
 	logger.info response   
 	logger.info response.body
 	#temp = input_json.to_s +  response.to_s
-    render json: response 
+    render json: "" 
 	#render json: temp
   
   end

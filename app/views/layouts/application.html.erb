@@ -3,12 +3,10 @@
 <head>
   <title>Bringit</title>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<% if content_for?(:meta) %>
+		<%= yield(:meta) %>
+	<% end %>
   <meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no">
-  <meta name="og:url" property="og:url" content="<%= yield_meta_tag(:ogurl,'http://bringit.kr')%>" />
-  <meta name="og:title" property="og:title" content="<%=yield_meta_tag(:ogtitle,'브링잇 Bringit')%>"/>
-  <meta name="og:type" property="og:type" content="website">
-  <meta name="og:image" property="og:image" content="<%=yield_meta_tag(:ogimage,'default_image')%>" />
-  <meta name="og:description" property="og:description" content="<%=yield_meta_tag(:ogdesc,'가장 쉬운 모닝커피, 브링잇')%>">
   <meta name="description" content="<%=yield_meta_tag(:desc,'가장 쉬운 모닝커피, 브링잇')%>">
 
 

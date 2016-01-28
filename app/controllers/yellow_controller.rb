@@ -62,6 +62,7 @@ class YellowController < ApplicationController
 		selected_user.phone = params[:phone]
 		selected_user.gender = params[:gender]
 		selected_user.save
+		redirect_to "http://kakaopay.bringit.kr"
 		#여기서는 튜토리얼 화면만 보여주면 됩니다. 템플릿 필요 렌더 니니요 
 	end	
 
@@ -74,7 +75,8 @@ class YellowController < ApplicationController
 		#new_order.option = 여기다가 custom 나눠서 담아야됨
 		new_order.custom = params[:custom_option]
 		new_order.price = params[:value].to_i
-		new_order.order_time = Time.zone.now + params[:order_time].to_i*60
+#		new_order.order_time = params[:order_time].to_datetime
+		new_order.order_time = Time.zone.now.change({hour: params[:order_time][0,2], min: params[:order_time][2,4], sec: "00"})
 		new_order.payment_status = "before"
 		new_order.save
 		redirect_to :back
@@ -101,14 +103,13 @@ class YellowController < ApplicationController
 		end	
 		selected_user = Kakaocustomer.where("txnid=?",txnid).take
 		order_to_pay = selected_user.kakaoorders.where("payment_status=?","before").take
-	    call_url = "http://bringit.kr:3000/hikakao.php?value=#{order_to_pay.price}&pname=#{Menu.find(order_to_pay.menu_id).menu_title}&txnid=#{selected_user.txnid}"
-		redirect_to call_url
+		@call_url = "http://bringit.kr:3000/hikakao.php?value=#{order_to_pay.price}&pname=#{Shop.find(order_to_pay.shop_id).shop_name}:#{Menu.find(order_to_pay.menu_id).menu_title}&txnid=#{selected_user.txnid}"
 	end
 
 	def adjust_txnid
 		selected_user = Kakaocustomer.where("txnid=?",params[:old]).take
-		selected_user.txnid = params[:txnid]
-		selected_user.save
+		#selected_user.txnid = params[:txnid]
+		#selected_user.save
 		render :json=>true 
 	end
 
@@ -175,6 +176,18 @@ class YellowController < ApplicationController
 
 			logger.info input.to_s
 		render json: input
+	end
+	
+	def kakaopay_complete
+		selected_user = Kakaocustomer.where("txnid=?",params[:txnid]).take
+		selected_order = selected_user.kakaoorders.where("payment_stauts=?","before").take
+		check = params[:check]
+		if check == "success"
+			selected_order.payment_status = "stamp"
+			selected_order.save
+		else
+			
+		end
 	end
 
 end

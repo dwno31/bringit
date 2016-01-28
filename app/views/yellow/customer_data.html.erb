@@ -42,7 +42,7 @@
 							<td><%= record.custom %></td>
 							<td><%= Menu.find(record.menu_id).menu_price %></td>
 							<td><%= record.order_time.strftime("%Y/%m/%d %H:%M") %></td>
-							<td><button onclick="fill_order(<%= index %>)">로드</button></td>
+							<td class="loader"><button class="load_btn" >로드</button></td>
 						</tr>
 					<% end %>
 				</table>
@@ -59,15 +59,16 @@
 					<td>시각</td>
 				</tr>
 				<tr>
-					<form action=/yellow/create_order method=post>
-					<input type=hidden name=customer_id value=<%= @selected_user.id%> >
-					<td><input type=text name=zone value=을지로입구역></td>
-					<td><input type=text name=shop value=매머드커피></td>
-					<td><input type=text name=menu></td>
-					<td><input type=text name=custom_option></td>
-					<td><input type=text name=value></td>
-					<td><input type=text name=order_time></td>
-					<td><input type=submit value=GO></td></form>
+					<form id="create_order_form" action=/yellow/create_order method=post">
+ 						<input type=hidden name=customer_id value=<%= @selected_user.id%> >
+						<td><input type=text name=zone value=을지로입구역></td>
+						<td><input type=text name=shop value=매머드커피></td>
+						<td><input type=text name=menu></td>
+						<td><input type=text name=custom_option></td>
+						<td><input type=text name=value></td>
+						<td><input type=text name=order_time></td>
+						<td><input type=submit value=GO></td>
+					</form>
 				</tr>
 			</table>
 		</div>
@@ -89,6 +90,7 @@
 		var $menu = $('input[name=menu]');
 		var $custom = $('input[name=custom_option]');
 		var $value = $('input[name=value]');
+		var $time = $('input[name=order_time]');
 
 		function ajax_success(data) {
 			console.log("ajax success");
@@ -113,20 +115,6 @@
 		});
 
 		//create cstom event for zone input
-/*		$zone.bind("change", function() {
-			console.log($zone.val());
-			if(jQuery.inArray($zone.val(), zones) > -1) {
-				$.ajax({
-				    type: "POST",
-				    url: "http://bringit.kr/yellow/auto_complete",
-				    data: {"zone" : $zone.val()},
-				    success: function(data) {
-						ajax_success(data);
-					}
-				});
-			} //ajax call to server
-		});*/
-
 		$zone.bind('keydown', function (e) {
 			if(e.keyCode == 9) {
 				console.log("$zone tab pressed");
@@ -142,33 +130,22 @@
 			}
 		});
 
-/*		document.querySelector('input[name=zone]').addEventListener("keypress", function(e) {
-	alert("zone keypress event");
-	if(e.keyCode == 9) 
-		console.log("zone tab pressed");
-});*/
-
 		$shop.autocomplete({
 			source: shops
 		});
 
-		$shop.bind("change", function() {
-			console.log($shop.val());
-			if(jQuery.inArray($shop.val(), shops) > -1) {
-				$.ajax({
-					type: "POST",
-					url: "http://bringit.kr/yellow/auto_complete",
-					data: {"shop" : $shop.val()},
-					success: function(data) {
-						ajax_success(data);
-					}
-				});
-			}
-		});
-
-		$shop.on('keypress', function (e) {
+		$shop.bind('keydown', function (e) {
 			if(e.keyCode == 9) {
 				console.log("$shop tab pressed");
+
+				if($.inArray($shop.val(), shops) > -1) {
+					$.ajax({
+						type: "POST",
+						url: "http://bringit.kr/yellow/auto_complete",
+						data: {"shop" : $shop.val()},
+						success: function(data) { ajax_success(data); }
+					});
+				}
 			}
 		});
 
@@ -176,29 +153,37 @@
 			source: menu_name, 
 		});
 
-		$menu.bind("change", function() {
-			console.log($menu.val());
-			var idx = $.inArray($menu.val(), menu_name);
-			console.log("idx: " + idx);
-			if(idx > -1) {
-				$value.val(menu_price[idx]);
-			}
-		});	
-
-		$menu.on('keypress', function (e) {
+		$menu.bind('keydown', function (e) {
 			if(e.keyCode == 9) {
 				console.log("$menu tab pressed");
+				var idx = $.inArray($menu.val(), menu_name);
+				if(idx > -1) {
+					$value.val(menu_price[idx]);
+				}
 			}
 		});
 
-		function fill_order(index) { //fill #order_table data with row data
-			console.log(index);
-			$tr = $("#row-"+index).children("td");
+		$("td.loader").on("click", "button.load_btn", function() { //fill #order_table data with row data
+			var pid = this.parentNode.parentNode.id;
+			console.log(pid);
+			//$tr = $("#row-"+index).children("td");
+			$tr = $("#"+pid).children("td");
 			console.log($tr);
 			$shop.val($tr[1].innerText);
 			$menu.val($tr[2].innerText);
 			$custom.val($tr[3].innerText);
 			$value.val($tr[4].innerText);
-		}
+		});
+
+		$("#create_order_form").submit(function() {
+			if($zone.val() && $shop.val() && $menu.val() 
+					&& $value.val() && $time.val()) {
+				return true;
+			}
+			else {
+				alert("상품명/가격/시각이 채워졌는지 확인해주세요");
+				return false; 
+			}
+		});
 	});
 </script>
