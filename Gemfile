@@ -12,6 +12,7 @@ gem 'roo-xls'
 gem 'figaro'
 gem 'faye'
 gem 'thin'
+gem 'rack-cors', :require => 'rack/cors'
 gem 'therubyracer', platform: :ruby
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 4.2.4', git: "git://github.com/rails/rails.git", branch: '4-2-stable'

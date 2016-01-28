@@ -1,0 +1,103 @@
+<script>
+document.addEventListener("touchstart", function(){}, true);
+</script>
+<div class=whole_view>
+	<div class=top_bar>
+		<span>브링잇 회원가입</span>
+	</div>
+	<div class=bringit_image>
+	
+	</div>
+
+	<div class=bringit_intro>
+		<span style=text-align:center;>
+			브링잇은 바쁜 출근길에도 한 잔의 커피는 꼭 마셔야 하는<br>
+			당신을 위한 모닝커피 예약 서비스입니다.<br>
+			카톡으로 간편하게 커피와 약속하세요.<br>
+			원하는 시간에 늘 가던 그 카페에서 커피를 바로 가져가세요.
+		</span>
+	</div>
+	<div class=data_input>
+		<div class=phone_nu>
+			<div class=input_header>
+				<span>휴대폰</span>
+			</div>
+			<div class=input_body>
+				<div class=input_body_cell style="display:table-cell; vertical-align:middle;">
+					<input form=join_submit maxlength=11 id=phone type=text name=phone placeholder="예)01012345678" style="font-size:1.2em;" required>
+				</div>
+			</div>
+		</div>
+		<div class=bday>
+			<div class=input_header>
+				<span>생년월일</span>
+			</div>
+			<div class=input_body>
+				<div class=input_body_cell>
+					<input form=join_submit type=text name=bday placeholder=예)920110 style="font-size:1.2em;" maxlength=6 required>
+				</div>
+			</div>
+		</div>
+		<div class=gender>
+			<div class=input_header>
+				<span>성별</span>
+			</div>
+			<div class=input_body>
+				<div class="input_body_cell checks">
+					<input form=join_submit type="radio" id="ex_rd" name="gender" value="boy" required> 
+						<label for="ex_rd">남</label> 
+					<input form=join_submit type="radio" id="ex_rd2" name="gender" value="girl" required>
+						<label for="ex_rd2">여</label>
+				</div>
+			</div>
+		</div>
+		<input form=join_submit type=hidden value="<%=@kakao_nick%>" name=nick>
+		<input form=join_submit type=hidden value="<%=@txnid%>" name=txnid>
+	</div>
+	<hr>	
+	<div class=agreement>
+		<div class=agreement_header>
+			<span>약관동의</span>
+		</div>
+		<div class=agreement_content>
+			<div class=usage_agree>
+				<div class="agree_checkbox">
+					<div class="checks small etrans">
+						<input form=join_submit type="checkbox" id="usage_agree" required>
+						<label for="usage_agree">이용약관 동의</label>
+					</div>
+				</div>
+				<div class=agree_detail>
+				</div>
+			</div>
+			<div class=data_use_agree>
+				<div class="agree_checkbox">
+					<div class="checks etrans small">
+						<input form=join_submit type="checkbox" id="data_agree" required>
+						<label for="data_agree">개인정보취급방침 동의</label>
+					</div>
+				</div>
+				<div class=agree_detail>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class=join_button>
+		<div class=button_div><span>회원가입</span></div>
+	</div>
+	<form id=join_submit action=/yellow/join_and_tutorial method=get></form>
+</div>
+<script>
+
+function submit_input(){
+	document.forms[0].submit();	
+
+};
+
+
+$(document).ready(function(){
+	$(".button_div").on('click',function(){ submit_input()});
+});
+
+
+</script>

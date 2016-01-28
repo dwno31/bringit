@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160107121011) do
+ActiveRecord::Schema.define(version: 20160126084741) do
 
   create_table "customers", force: :cascade do |t|
     t.string   "customer_simid", limit: 255
@@ -22,6 +22,44 @@ ActiveRecord::Schema.define(version: 20160107121011) do
     t.boolean  "push_alarm"
     t.text     "default_order",  limit: 65535
     t.text     "my_coupon",      limit: 65535
+  end
+
+  create_table "kakaochatlogs", force: :cascade do |t|
+    t.string   "chat_id",      limit: 255
+    t.string   "nickname",     limit: 255
+    t.text     "message",      limit: 65535
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.datetime "message_time"
+  end
+
+  create_table "kakaocustomers", force: :cascade do |t|
+    t.string   "nick",       limit: 255
+    t.string   "chatid",     limit: 255
+    t.string   "txnid",      limit: 255
+    t.text     "coupon",     limit: 65535
+    t.string   "phone",      limit: 255
+    t.string   "bday",       limit: 255
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.string   "gender",     limit: 255
+  end
+
+  create_table "kakaoorders", force: :cascade do |t|
+    t.string   "zone",             limit: 255
+    t.integer  "shop_id",          limit: 4
+    t.integer  "kakaocustomer_id", limit: 4
+    t.integer  "menu_id",          limit: 4
+    t.text     "token",            limit: 65535
+    t.string   "merchant_refid",   limit: 255
+    t.string   "option",           limit: 255
+    t.string   "custom",           limit: 255
+    t.integer  "price",            limit: 4
+    t.datetime "order_time"
+    t.string   "order_status",     limit: 255
+    t.string   "payment_status",   limit: 255
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
   end
 
   create_table "menus", force: :cascade do |t|

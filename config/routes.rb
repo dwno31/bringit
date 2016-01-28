@@ -5,7 +5,8 @@ Rails.application.routes.draw do
   get ':controller(/:action)'
   post ':controller(/:action)'
   root to: "main#landing_page"
-  
+  get '결제',:to => "main#test_url" 
+  get '결제(/:id)' => "main#hello"
   # get 'provider/login' => 'devise/sessions#new'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

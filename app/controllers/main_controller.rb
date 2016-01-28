@@ -9,6 +9,14 @@ class MainController < ApplicationController
 
   end
 
+  def test_url
+	headers = Hash[*env.select {|k,v| k.start_with? 'HTTP_'}
+  .collect {|k,v| [k.sub(/^HTTP_/, ''), v]}
+  .collect {|k,v| [k.split('_').collect(&:capitalize).join('-'), v]}
+  .sort
+  .flatten]
+	render text: headers
+  end
   def bringit_kakao
  	input = params	
 	
@@ -521,5 +529,16 @@ logger.info @shop
 
 	render json: render_json
 
+  end
+
+  def yellow_id
+	input = params;	
+
+	if input.nil?
+		logger.info input
+		render json: input
+	else
+		render layout: false
+	end
   end	
 end

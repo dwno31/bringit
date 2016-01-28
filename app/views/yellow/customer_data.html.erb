@@ -1,0 +1,204 @@
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+<div class=whole_view>
+	<div class=data_div>
+		<div class = customer_status>
+			<p></p>
+			<p> 카카오톡 이름: <span id=kakao_id><%= @selected_user.nick %></span></p>
+			<p> 전화번호 : <span id=phone><%= @selected_user.phone.to_s == "" ? "아직 입력되지 않았습니다" : @selected_user.phone %></span></p>
+			<p> 생년월일 : <span id=bday><%= @selected_user.bday.to_s == "" ? "아직 입력되지 않았습니다" : @selected_user.bday %></span></p>
+			<p> 쿠폰 내역 <!--<br>
+				테스트임당 : 테스트<br>
+				테스트임당 : 테스투-->
+			</p>
+		</div>
+		<div class = order_records>
+			<p style="text-align:center; font-size:1.2em; margin-top:5px; margin-bottom:5px;">주문 내역</p>
+			<div class=Order_recordsTable>
+				<table>
+					<tr>
+						<td>주문지역</td>	
+						<td>주문상점</td>
+						<td>상품명</td>
+						<td>커스텀</td>
+						<td>가격</td>
+						<td>시각</td>
+						<td>로드</td>
+					</tr>
+					<!--<tr>
+						<td>1레코드 입력 예정</td>
+						<td>2</td>
+						<td>3</td>
+						<td>4</td>
+						<td>5</td>
+						<td>6</td>
+						<td>7</td>
+					</tr>-->
+					<% @users_order.each_with_index do |record, index| -%>
+						<tr id="row-<%= index %>">
+							<td><%= Shop.find(record.shop_id).shop_location %></td>
+							<td><%= Shop.find(record.shop_id).shop_name %></td>
+							<td><%= Menu.find(record.menu_id).menu_title %></td>
+							<td><%= record.custom %></td>
+							<td><%= Menu.find(record.menu_id).menu_price %></td>
+							<td><%= record.order_time.strftime("%Y/%m/%d %H:%M") %></td>
+							<td><button onclick="fill_order(<%= index %>)">로드</button></td>
+						</tr>
+					<% end %>
+				</table>
+			</div>
+		</div>
+		<div class=new_order_div>
+			<table id=order_table > 
+				<tr style="text-align:center">
+					<td>주문지역</td>
+					<td>주문상점</td>
+					<td>상품명</td>
+					<td>커스텀</td>
+					<td>가격</td>
+					<td>시각</td>
+				</tr>
+				<tr>
+					<form action=/yellow/create_order method=post>
+					<input type=hidden name=customer_id value=<%= @selected_user.id%> >
+					<td><input type=text name=zone value=을지로입구역></td>
+					<td><input type=text name=shop value=매머드커피></td>
+					<td><input type=text name=menu></td>
+					<td><input type=text name=custom_option></td>
+					<td><input type=text name=value></td>
+					<td><input type=text name=order_time></td>
+					<td><input type=submit value=GO></td></form>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+	
+	$(function() {
+		var zones = <%= raw Shop.pluck(:shop_location) %>; //default val
+		var shops = <%= raw Shop.where(:shop_location => "을지로입구역").pluck("shop_name") %>; //default val
+		var menu = <%= raw Menu.where(:shop_id => Shop.find_by(:shop_name => "매머드커피")).to_json %>;
+		var menu_name = <%= raw Menu.where(:shop_id => Shop.find_by(:shop_name => "매머드커피")).pluck(:menu_title) %>; 
+		var menu_price = <%= raw Menu.where(:shop_id => Shop.find_by(:shop_name => "매머드커피")).pluck(:menu_price) %>;
+		var custom;
+
+		var $zone = $('input[name=zone]');
+		var $shop = $('input[name=shop]');
+		var $menu = $('input[name=menu]');
+		var $custom = $('input[name=custom_option]');
+		var $value = $('input[name=value]');
+
+		function ajax_success(data) {
+			console.log("ajax success");
+			console.log(data);
+			if("shop" in data) {
+				console.log("data contains property shop");
+				console.log("data[shop]: " + data["shop"]);
+				shops = data["shop"];
+				$shop.autocomplete("option", "source", shops);		
+			} else if("menu" in data) {
+				menu = data["menu"];
+				$.each(menu, function(index) {
+					menu_name.push(menu[index].menu_title);
+					menu_price.push(menu[index].menu_price);
+				});
+				$menu.autocomplete("option", "source", menu_name);
+			}
+		}
+
+		$zone.autocomplete({
+			source: zones//,
+		});
+
+		//create cstom event for zone input
+/*		$zone.bind("change", function() {
+			console.log($zone.val());
+			if(jQuery.inArray($zone.val(), zones) > -1) {
+				$.ajax({
+				    type: "POST",
+				    url: "http://bringit.kr/yellow/auto_complete",
+				    data: {"zone" : $zone.val()},
+				    success: function(data) {
+						ajax_success(data);
+					}
+				});
+			} //ajax call to server
+		});*/
+
+		$zone.bind('keydown', function (e) {
+			if(e.keyCode == 9) {
+				console.log("$zone tab pressed");
+
+				if($.inArray($zone.val(), zones) > -1) {
+					$.ajax({
+						type: "POST",
+						url: "http://bringit.kr/yellow/auto_complete",
+						data: {"zone" : $zone.val()},
+						success: function(data) { ajax_success(data); }
+					});
+				}
+			}
+		});
+
+/*		document.querySelector('input[name=zone]').addEventListener("keypress", function(e) {
+	alert("zone keypress event");
+	if(e.keyCode == 9) 
+		console.log("zone tab pressed");
+});*/
+
+		$shop.autocomplete({
+			source: shops
+		});
+
+		$shop.bind("change", function() {
+			console.log($shop.val());
+			if(jQuery.inArray($shop.val(), shops) > -1) {
+				$.ajax({
+					type: "POST",
+					url: "http://bringit.kr/yellow/auto_complete",
+					data: {"shop" : $shop.val()},
+					success: function(data) {
+						ajax_success(data);
+					}
+				});
+			}
+		});
+
+		$shop.on('keypress', function (e) {
+			if(e.keyCode == 9) {
+				console.log("$shop tab pressed");
+			}
+		});
+
+		$menu.autocomplete({ 
+			source: menu_name, 
+		});
+
+		$menu.bind("change", function() {
+			console.log($menu.val());
+			var idx = $.inArray($menu.val(), menu_name);
+			console.log("idx: " + idx);
+			if(idx > -1) {
+				$value.val(menu_price[idx]);
+			}
+		});	
+
+		$menu.on('keypress', function (e) {
+			if(e.keyCode == 9) {
+				console.log("$menu tab pressed");
+			}
+		});
+
+		function fill_order(index) { //fill #order_table data with row data
+			console.log(index);
+			$tr = $("#row-"+index).children("td");
+			console.log($tr);
+			$shop.val($tr[1].innerText);
+			$menu.val($tr[2].innerText);
+			$custom.val($tr[3].innerText);
+			$value.val($tr[4].innerText);
+		}
+	});
+</script>

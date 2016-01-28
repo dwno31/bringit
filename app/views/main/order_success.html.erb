@@ -3,7 +3,7 @@
 		<% logger.info @render_json%>
 		var pass_json = <%= raw @render_json.to_json%>;
 		console.log(pass_json);
-		window.payco.result(0, JSON.stringify(pass_json));
+		window.easypay.result(0, JSON.stringify(pass_json));
 		console.log("after result");
 		};
 </script>

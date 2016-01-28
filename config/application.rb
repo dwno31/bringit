@@ -23,5 +23,24 @@ module Bringit
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+
+	#middleware usage of Rack::Cors for https -> http crossDomain communication
+	#use Rack::Cors do
+	#	allow do
+	#		origins 'https://yellowid.kakao.com/chats/index'
+	#		resource '*', :headers => :any, :methods => [:post]
+	#	end
+	#end
+config.action_dispatch.default_headers.merge!({
+  'Access-Control-Allow-Origin' => 'http://bringit.kr:3000',
+  'Access-Control-Request-Method' => '*'
+})
+
+	config.middleware.use Rack::Cors do
+      allow do
+        origins 'https://yellowid.kakao.com/chats/index'
+        resource '*', :headers => :any, :methods => [:get, :post, :options]
+      end
+    end
   end
 end

@@ -145,6 +145,7 @@ GEM
       pusher-signature (~> 0.1.8)
     pusher-signature (0.1.8)
     rack (1.6.4)
+    rack-cors (0.4.0)
     rack-proxy (0.5.17)
       rack
     rack-reverse-proxy (0.9.1)
@@ -241,6 +242,7 @@ DEPENDENCIES
   mysql2
   passenger
   pusher
+  rack-cors
   rack-reverse-proxy
   rails (~> 4.2.4)!
   rest-client
