@@ -143,6 +143,13 @@ class YellowController < ApplicationController
 		new_order.order_time = Time.zone.now.change({hour: params[:order_time][0,2], min: params[:order_time][2,4], sec: "00"})
 		new_order.payment_status = "before"
 		new_order.save
+
+		Pusher.url = "https://1e2e0a92d1f42ff0c0ae:b232bea32adb2d571081@api.pusherapp.com/apps/173648"
+
+		Pusher.trigger('kakao_order_channel', 'create_event', { 
+			message: new_order.to_json
+		})
+
 		redirect_to :back
 	end
 

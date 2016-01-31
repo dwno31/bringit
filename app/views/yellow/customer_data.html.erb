@@ -1,4 +1,5 @@
 <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="https://js.pusher.com/3.0/pusher.min.js"></script>
 
 <div class=whole_view>
 	<div class=data_div>
@@ -211,5 +212,16 @@
 				return false; 
 			}
 		});
+
+		Pusher.log = function(message) {
+			if(window.console && window.console.log) {
+				window.console.log(message);
+			}
+		};
+		
+		var pusher = new Pusher('1e2e0a92d1f42ff0c0ae', { encrypted: true });
+
+		var channel = pusher.subscribe('kakao_order_channel');
+		channel.bind('create_event', function(data) { alert(data.message); });
 	});
 </script>
