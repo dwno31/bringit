@@ -18,7 +18,13 @@ html,body{
     outline: none;
 -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
-
+ input, input:before, input:after {
+      -webkit-user-select: initial;
+      -khtml-user-select: initial;
+      -moz-user-select: initial;
+      -ms-user-select: initial;
+      user-select: initial;
+     } 
 //로그인창 
 
 .login_div{
@@ -43,18 +49,22 @@ div{
 }
 
 .data_div{
-	height:60%;
+	height:80%;
+	width: calc(100% - 500px);
+	float:left;
 }
 	.data_div > div{
-		float:left;	
+/*		float:left;	*/
 	}
 	.customer_status{
 		width:20%;
 		height:100%;
+		float: inherit;
 	}
 	.order_records{
-		width:79%;
-		height:100%;
+		width: 76%;
+		height: 100%;
+		float: inherit;
 	}
 		.Order_recordsTable {
 			margin:0px;padding:0px;
@@ -160,6 +170,21 @@ div{
 		font-size:1.5em;
 		text-align:center;
 	}
+
+.chg_div{
+	width: 500px;
+	float: right;
+	height: 60%;
+}
+
+	.pusher_div{
+		height: 100%;
+	}
+	
+	.chg_login_div{
+		text-align: center;
+	}
+
 
 //회원가입 페이지 레이아웃
 .top_bar{

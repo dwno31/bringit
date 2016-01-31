@@ -1,9 +1,48 @@
 class YellowController < ApplicationController
 
 	require 'pusher'
-	
+	before_action :check_browser, only: [:join_page, :call_kakaopay, :join_and_tutorial, :adjust_txnid, :kakaopay_complete]
+
+	def check_browser
+		headers = Hash[*env.select {|k,v| k.start_with? 'HTTP_'}
+					.collect {|k,v| [k.sub(/^HTTP_/, ''), v]}
+					.collect {|k,v| [k.split('_').collect(&:capitalize).join('-'), v]}
+					.sort
+					.flatten]
+		txnid=""
+		logger.info headers
+		logger.info "헤더"
+		if !headers["Cookie"].nil?
+			cookie = headers["Cookie"].split("; ")
+			cookie.each do |one|
+				one = one.split('=')
+				logger.info one
+				if one[0] == "txnId"
+					txnid = one[1]
+					logger.info txnid
+				end
+			end
+			logger.info txnid
+			kakao_nick = params[:id]
+			if txnid==""
+				if headers["User-Agent"].include?"iPhone"
+					
+				
+				end
+				redirect_to "/yellow/error_page?msg=10" 
+			end
+		elsif headers["User-Agent"].include?"kakao"
+
+		else
+			redirect_to "/yellow/error_page?id=12"
+		end
+	end
+
 	def error_page
-		
+		match_msg = {11=>"결제 가능한 주문 내역이 없습니다",10=>"카카오톡을 통해 접근해주세요", 1=>"이미 가입되어 있습니다",12=>"알 수 없는 접근"}
+		input_msg = params[:id].to_i
+
+		@output_msg = match[input_msg] 		
 	end
 	def login
 	end
@@ -19,8 +58,21 @@ class YellowController < ApplicationController
 
 		logger.info @users_order.to_json
 
-		
-	
+	    @coupons = {}
+
+		@users_order.each do |order|
+			if order.payment_status == "stamp"
+				s_name = Shop.find(order.shop_id).shop_name
+
+				if @coupons.has_key?(s_name)
+					@coupons[s_name] += 1
+				elsif
+					@coupons[s_name] = 1
+				end
+			end
+		end		
+
+		logger.info @coupons	
 	end
 
 	def join_page
@@ -31,27 +83,39 @@ class YellowController < ApplicationController
 					.flatten]
 		logger.info headers
 		txnid=""
-		if !headers["Cookie"].nil?
-		cookie = headers["Cookie"].split("; ")
-		cookie.each do |one|
-			one = one.split('=')
-			logger.info one
-			if one[0] == "txnId"
-				txnid = one[1]
-				logger.info txnid
+	
+		if !headers["User-Agent"].include?"kakao" #썸네일봇용 프리패스
+			if !headers["Cookie"].nil?
+			cookie = headers["Cookie"].split("; ")
+			cookie.each do |one|
+				one = one.split('=')
+				logger.info one
+				if one[0] == "txnId"
+					txnid = one[1]
+					logger.info txnid
+				end
 			end
+			logger.info txnid
+			end
+			#txnid가 없는경우 : 아이폰이거나 외부브랑져
+			if txnid==""
+				if headers["User-Agent"].include?"iPhone"
+					txnid = "ios"+params[:id]
+				else
+					redirect_to "/yellow/error_page?id=10"
+				end
+			end
+
+			selected_user = Kakaocustomer.where("nick=?",params[:id]).take
+			@kakao_nick = params[:id]
+			@txnid = txnid	
+			if !selected_user.bday.nil?
+				redirect_to "/yellow/error_page?id=01"
+			end
+			selected_user.txnid = txnid 
+			
+			selected_user.save
 		end
-		logger.info txnid
-		end
-		@kakao_nick = params[:id]
-		@txnid = txnid
-		selected_user = Kakaocustomer.where("nick=?",params[:id]).take
-		if !selected_user.bday.nil?
-			redirect_to "/yellow/error_page"
-		end
-		selected_user.txnid = txnid 
-		
-		selected_user.save
 	end
 	
 	def join_and_tutorial
@@ -90,20 +154,28 @@ class YellowController < ApplicationController
 					.sort
 					.flatten]
 		logger.info headers
-		cookie = headers["Cookie"].split("; ")
 		txnid = ""
+		@call_url = "" #에러 캐치를 위한 변수 초기화
 
-		cookie.each do |one|
-			one = one.split('=')
-			logger.info one
-			if one[0] == "txnId"
-				txnid = one[1]
-				logger.info txnid
+		if !headers["User-Agent"].include?"kakao" #썸네일봇용 프리패스
+
+			cookie = headers["Cookie"].split("; ")
+			cookie.each do |one|
+				one = one.split('=')
+				logger.info one
+				if one[0] == "txnId"
+					txnid = one[1]
+					logger.info txnid
+				end
+			end	
+			selected_user = Kakaocustomer.where("txnid=?",txnid).take
+			order_to_pay = selected_user.kakaoorders.where("payment_status=?","before").take
+			if !order_to_pay.nil?
+				@call_url = "http://bringit.kr:3000/hikakao.php?value=#{order_to_pay.price}&pname=#{Shop.find(order_to_pay.shop_id).shop_name}:#{Menu.find(order_to_pay.menu_id).menu_title}&txnid=#{selected_user.txnid}"
+			else
+				redirect_to "/yellow/error_page?id=11"
 			end
-		end	
-		selected_user = Kakaocustomer.where("txnid=?",txnid).take
-		order_to_pay = selected_user.kakaoorders.where("payment_status=?","before").take
-		@call_url = "http://bringit.kr:3000/hikakao.php?value=#{order_to_pay.price}&pname=#{Shop.find(order_to_pay.shop_id).shop_name}:#{Menu.find(order_to_pay.menu_id).menu_title}&txnid=#{selected_user.txnid}"
+		end
 	end
 
 	def adjust_txnid
@@ -180,10 +252,12 @@ class YellowController < ApplicationController
 	
 	def kakaopay_complete
 		selected_user = Kakaocustomer.where("txnid=?",params[:txnid]).take
-		selected_order = selected_user.kakaoorders.where("payment_stauts=?","before").take
+		selected_order = selected_user.kakaoorders.where("payment_status=?","before").take
 		check = params[:check]
 		if check == "success"
 			selected_order.payment_status = "stamp"
+			selected_order.merchant_refid = params[:refid]
+			selected_order.token = params[:token]
 			selected_order.save
 		else
 			

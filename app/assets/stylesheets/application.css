@@ -18,7 +18,6 @@
     font-family: 'Spoqa Han Sans';
     font-weight: 400;
     src: local('SpoqaHanSans-Regular'), local('SpoqaHanSans-Regular'),
-	url(https://cdn.rawgit.com/spoqa/spoqa-han-sans/master/Subset/SpoqaHanSans/Spoqa%20Han%20sans_subset%28webfont%20inclued%29/SpoqaHanSans-Regular/SpoqaHanSans-Regular.woff) format('woff');
 }
 * {
   font-family: 'Spoqa Han Sans', 'Spoqa Han Sans JP', 'Sans-serif';

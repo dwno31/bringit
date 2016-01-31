@@ -7,9 +7,10 @@
 			<p> 카카오톡 이름: <span id=kakao_id><%= @selected_user.nick %></span></p>
 			<p> 전화번호 : <span id=phone><%= @selected_user.phone.to_s == "" ? "아직 입력되지 않았습니다" : @selected_user.phone %></span></p>
 			<p> 생년월일 : <span id=bday><%= @selected_user.bday.to_s == "" ? "아직 입력되지 않았습니다" : @selected_user.bday %></span></p>
-			<p> 쿠폰 내역 <!--<br>
-				테스트임당 : 테스트<br>
-				테스트임당 : 테스투-->
+			<p> 쿠폰 내역 <br>
+				<% @coupons.each do |k, v| %>
+					<span><%= k %> : <%= v %></span><br>
+				<% end %>
 			</p>
 		</div>
 		<div class = order_records>
@@ -71,6 +72,31 @@
 					</form>
 				</tr>
 			</table>
+		</div>
+	</div>
+
+	<div class="chg_div">
+		<div class="pusher_div">
+			<p style="text-align:center; font-size:1.2em; margin-top:5px; margin-bottom-5px">실시간 주문내역</p>
+			<div class="pusher_table_div Order_recordsTable">
+				<table>
+					<tr>
+						<td>주문지역</td>
+						<td>주문상점</td>
+						<td>상품명</td>
+						<td>커스텀</td>
+						<td>가격</td>
+						<td>시각</td>
+						<td>결제확인</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="chg_login_div">
+			<form action=/yellow/cusomter_data method=get>
+				<input type=text placeholder=카톡닉네임 name=login_input id=login_input>
+				<input type=submit value=GO>
+			</form>
 		</div>
 	</div>
 </div>

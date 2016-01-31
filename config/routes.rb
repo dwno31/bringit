@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   get 'main/index'
   get 'main/cafeinfo'
   get 'main/hello'
-  get ':controller(/:action)'
+  get ':controller(/:action(/:id))'
   post ':controller(/:action)'
   root to: "main#landing_page"
   get '결제',:to => "main#test_url" 
